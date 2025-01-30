@@ -33,8 +33,8 @@ export class AuthenticationService {
     headers: new HttpHeaders().set('Content-Type', 'application/json').append('Access-Control-Allow-Origin', '*')
   };
 
-  
-  private decodedToken: ITokenDetail  = {};
+
+  private decodedToken: ITokenDetail = {};
   token = '';
 
   constructor(
@@ -57,11 +57,11 @@ export class AuthenticationService {
 
   configure() {
     this.oidcSecurityService.getAuthenticationResult().subscribe((res) => {
-      if(res) {
+      if (res) {
         console.log("User Authorized");
         this.token = res?.id_token;
         // this.setLoggedInUserPermissions(res?.idToken);
-      } 
+      }
       else {
         console.error("Authorization failed");
         // this.router.navigate(['/not-authorized']);
@@ -80,14 +80,14 @@ export class AuthenticationService {
   }
 
   logout() {
-      localStorage.removeItem('permissions');
-      localStorage.removeItem('Authorization');
-      this.cookieService.delete('Authentication');
-      this.oidcSecurityService.logoff();
+    localStorage.removeItem('permissions');
+    localStorage.removeItem('Authorization');
+    this.cookieService.delete('Authentication');
+    this.oidcSecurityService.logoff();
   }
-  getLoggedinUserId(): number {
+  getLoggedinUserId(): number | undefined {
     let token = localStorage.getItem('Authorization') || '';
-    let decodedToken: any = this.decodePassedToken(token);
+    let decodedToken: ITokenDetail = this.decodePassedToken(token);
     return decodedToken?.id;
   }
 
@@ -107,14 +107,14 @@ export class AuthenticationService {
 
   decodeToken(): ITokenDetail {
     if (this.decodedToken) {
-      let permissions: any = localStorage.getItem("permissions");
+      let permissions: string = localStorage.getItem("permissions") || '[]';
       this.decodedToken.scopes = JSON.parse(permissions) || [];
       return this.decodedToken;
     }
     else {
       if (this.token) {
         let decodedToken: ITokenDetail = helper.decodeToken(this.token) as ITokenDetail;
-        let permissions: any = localStorage.getItem("permissions");
+        let permissions: string = localStorage.getItem("permissions") || '[]';
         decodedToken.scopes = JSON.parse(permissions) || [];
         this.decodedToken = decodedToken;
         return this.decodedToken;
@@ -132,7 +132,7 @@ export class AuthenticationService {
 
   setLoggedInUserPermissions(idToken: any) {
     if (idToken) {
-      this.token =  idToken;
+      this.token = idToken;
       this.http.get<any>(this.apiUrl + '/auth/getAuthorizationToken').subscribe((token) => {
         console.log(token.token);
         const redirectUrl = sessionStorage.getItem("redirectUrl");
@@ -150,7 +150,7 @@ export class AuthenticationService {
     }
   }
 
-  getTokenExpirationDate(token: string): Date|null {
+  getTokenExpirationDate(token: string): Date | null {
     const decoded = helper.decodeToken(token);
 
     if (decoded.exp === undefined) {
@@ -162,16 +162,16 @@ export class AuthenticationService {
     return date;
   }
 
-  isTokenExpired(token?: string): boolean {
+  isTokenExpired(token?: string): boolean | undefined {
     if (!token) {
       return true;
     }
 
-    const date: any = this.getTokenExpirationDate(token);
+    const date: Date | null = this.getTokenExpirationDate(token);
     if (date === undefined) {
       return false;
     }
-    return !(date.valueOf() > new Date().valueOf());
+    return date ? !(date?.valueOf() > new Date().valueOf()) : undefined;
   }
 
   private handleError(err: HttpErrorResponse) {

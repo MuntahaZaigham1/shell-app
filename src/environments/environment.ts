@@ -19,7 +19,7 @@ export const authConfig: OpenIdConfiguration = {
   silentRenew: true,      // Enable silent refresh for token renewal
   silentRenewUrl: window.location.origin + '/assets/silent-refresh.html',
   postLogoutRedirectUri: window.location.origin,
-  postLoginRoute: '',
+  // postLoginRoute: '/home',
   forbiddenRoute: '/',
   unauthorizedRoute: '/',
   // logConsoleWarningActive: true,
