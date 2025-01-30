@@ -1,0 +1,40 @@
+.login-container {
+  height: calc(100% - 64px);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #485a80;
+  background-size: cover;
+  background-position: center;
+  background: linear-gradient(346deg, #2C374F 0%, #384664 35%, #485a80 100%);
+}
+
+.item-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-card {
+  max-width: 450px;
+  width: 100%;
+  margin: auto;
+  padding: 44px 43px 60px;
+  border-radius: 16px;
+  position: relative;
+  z-index: 9;
+  //   background-image: url('src/assets/images/form-bg1.png');
+  background-size: cover;
+  background-position: top;
+
+  @media screen and (max-width:479px) {
+    padding: 44px 15px 15px;
+  }
+}
+
+.not-authorized-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
