@@ -1,1 +1,1 @@
-declare module 'studio/Module';
+declare module 'studio/*';
