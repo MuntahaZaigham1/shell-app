@@ -1,3 +1,4 @@
 {
-	"tool1": "http://localhost:4201/remoteEntry.js"
+	"fast-code": "http://localhost:4300/remoteEntry.js",
+	"studio": "http://localhost:4202/remoteEntry.js"
 }
