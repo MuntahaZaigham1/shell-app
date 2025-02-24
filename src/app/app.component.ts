@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
 
   loadRemoteStyles(remoteName: string) {
     const stylesMap: { [key: string]: string } = {
-      'fast-code': 'http://localhost:4300/styles.css',
+      'fast-code': 'https://127.0.0.1:4300/styles.css',
       'studio': 'http://localhost:4202/styles.css',
       'tool1': 'http://localhost:4201/styles.css',
     };

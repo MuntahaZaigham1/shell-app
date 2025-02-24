@@ -17,7 +17,8 @@
     "@angular/material-moment-adapter": "^14.2.7",
     "@angular/router": "14.3.0",
     "@ngx-translate/core": "11.0.1",
-    "@ngx-translate/http-loader": "4.0.0"
+    "@ngx-translate/http-loader": "4.0.0",
+    "zone.js": "^0.11.8"
   },
   "devDependencies": {
     "@angular-architects/module-federation": "^14.3.0",
@@ -46,7 +47,6 @@
     "npm": "^11.0.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
-    "typescript": "~4.7.2",
-    "zone.js": "~0.11.4"
+    "typescript": "~4.7.2"
   }
 }
