@@ -9,6 +9,10 @@ ModuleFederationConfigPlugin = withModuleFederationPlugin({
     "@angular/material": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "@ngx-translate/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "@ngx-translate/http-loader": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@angular/platform-browser": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@angular/platform-browser/animations": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@angular/animations": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@angular/platform-browser-dynamic": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
   })
 });
 
@@ -21,7 +25,7 @@ ModuleFederationConfigPlugin.devServer = {
   webSocketServer: 'ws',  // Ensure WebSockets work
 },
 
-  ModuleFederationConfigPlugin.output.publicPath = 'https://127.0.0.1:4200/'
+ModuleFederationConfigPlugin.output.publicPath = 'https://127.0.0.1:4200/'
 ModuleFederationConfigPlugin.output.uniqueName = 'shell'
 
 
