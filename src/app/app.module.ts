@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './custom-reuse-strategy';
 import { MaterialModule } from './landing/material.module';
+import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 
 
 // Dynamic translation loader
@@ -58,7 +59,8 @@ export function RemoteTranslateLoader(http: HttpClient) {
     LandingGuard,
     OidcSecurityService,
     ConfigurationService,
-    TranslateService
+    TranslateService,
+    { provide: LocationStrategy, useClass: PathLocationStrategy }
   ],
   bootstrap: [AppComponent]
 })

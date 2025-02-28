@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthenticationService,
     private translate: TranslateService,
+    private cd: ChangeDetectorRef,
   ) {
 
     translate.addLangs(["en", "fr"]);
@@ -29,6 +30,10 @@ export class AppComponent implements OnInit {
       console.log('current language in shell', browserLang.match(/en|fr/) ? browserLang : 'en');
     });
 
+  }
+
+  ngDoCheck() {
+    console.log("asdf")
   }
 
   changeTitle(title: string, urltoNavigate: string) {
