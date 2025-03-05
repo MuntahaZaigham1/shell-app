@@ -4,7 +4,6 @@ import { LandingGuard } from './core/guards/landing.guard';
 import { AuthGuard } from './core/guards/auth.guard';
 import { TestComponent } from './test/test.component';
 import { loadRemoteModule } from '@angular-architects/module-federation';
-import { FastcodeModule } from 'fast-code/Module'; // Static Import
 
 
 const routes: Routes = [
@@ -28,7 +27,12 @@ const routes: Routes = [
   },
   {
     path: 'codegen',
-    loadChildren: () => FastcodeModule
+    loadChildren: () =>
+      loadRemoteModule({
+        type: 'manifest',
+        remoteName: 'fast-code',
+        exposedModule: './Module',
+      }).then((m) => m.FastcodeModule)
   },
 
   {
