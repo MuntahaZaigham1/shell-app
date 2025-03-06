@@ -22,11 +22,11 @@
     "@angular/router": "14.3.0",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
-    "fastcode-shared-service": "^0.0.1",
+    "fastcode-shared-service": "^0.0.4",
     "mkcert": "^3.2.0",
+    "moment": "^2.24.0",
     "tslib": "^2.3.0",
-    "zone.js": "^0.11.8",
-    "moment": "^2.24.0"
+    "zone.js": "^0.11.8"
   },
   "devDependencies": {
     "@angular-architects/module-federation": "^14.3.0",

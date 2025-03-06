@@ -1,4 +1,4 @@
-import { Injectable, Injector, NgModule } from '@angular/core';
+import { Injectable, Injector, NgModule, OnInit } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +21,7 @@ import { Router, RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './custom-reuse-strategy';
 import { MaterialModule } from './landing/material.module';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { SharedNavigationService } from 'fastcode-shared-service';
 
 
 // Dynamic translation loader
@@ -72,6 +73,4 @@ export class AppModule {
     // this.authenticationService.configure();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
-  
-
 }
