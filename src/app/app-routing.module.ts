@@ -8,6 +8,14 @@ import { loadRemoteModule } from '@angular-architects/module-federation';
 
 const routes: Routes = [
   {
+    path: "",
+    loadChildren: () => import("./landing/landing.module").then((m) => m.LandingModule),
+    data: {
+      from: "beforeLogin"
+    },
+    canActivate: [LandingGuard]
+  },
+  {
     path: 'studio',
     loadChildren: () =>
       loadRemoteModule({
@@ -32,9 +40,8 @@ const routes: Routes = [
         type: 'manifest',
         remoteName: 'fast-code',
         exposedModule: './Module',
-      }).then((m) => m.FastcodeModule)
+      }).then((m) => m.FastcodeModule),
   },
-
   {
     path: "core",
     loadChildren: () => import("./core/core.module").then((m) => m.CoreModule),
@@ -45,6 +52,7 @@ const routes: Routes = [
   },
   {
     path: "health", component: TestComponent,
+    canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

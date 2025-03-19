@@ -21,7 +21,7 @@ import { Router, RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './custom-reuse-strategy';
 import { MaterialModule } from './landing/material.module';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { SharedNavigationService } from 'fastcode-shared-service';
+import { SharedAuthenticationService } from 'fastcode-shared-service';
 
 
 // Dynamic translation loader
@@ -68,9 +68,12 @@ export function RemoteTranslateLoader(http: HttpClient) {
 export class AppModule {
   constructor(private authenticationService: AuthenticationService,
     private injector: Injector,
-    private router: Router
+    private router: Router,
+    private sharedAuthenticationService: SharedAuthenticationService
   ) {
-    // this.authenticationService.configure();
+    this.authenticationService.configure();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+
+    this.sharedAuthenticationService.sendAuthToken(this.authenticationService.idToken);
   }
 }

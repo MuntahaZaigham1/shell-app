@@ -10,10 +10,9 @@
       <a mat-list-item (click)="changeTitle('Studio', '/studio')">Studio</a>
       <a mat-list-item (click)="changeTitle('Tool1', '/tool1')">Tool1</a>
       <a mat-list-item (click)="changeTitle('Codegen', '/codegen/fastcode/home')">Codegen</a>
-      <!-- <a mat-list-item (click)="logoff()">Log out</a> -->
     </mat-nav-list>
   </mat-sidenav>
-
+  
   <!-- Main Content -->
   <mat-sidenav-content>
     <mat-toolbar color="primary">
@@ -21,6 +20,7 @@
         <mat-icon>menu</mat-icon>
       </button>
       <span>{{ pageTitle }}</span>
+      <mat-icon (click)="logoff()">power_settings_new</mat-icon>
     </mat-toolbar>
 
     <div *ngIf="showMicrofrontend" style="height:100%">

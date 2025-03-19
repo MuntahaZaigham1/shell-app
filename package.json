@@ -22,7 +22,7 @@
     "@angular/router": "14.3.0",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
-    "fastcode-shared-service": "^0.0.4",
+    "fastcode-shared-service": "^0.0.6",
     "mkcert": "^3.2.0",
     "moment": "^2.24.0",
     "tslib": "^2.3.0",
