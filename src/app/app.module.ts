@@ -1,4 +1,4 @@
-import { Injectable, Injector, NgModule, OnInit } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -13,7 +13,6 @@ import { TestComponent } from './test/test.component';
 import { AuthenticationService } from './core/services/authentication.service';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LandingGuard } from './core/guards/landing.guard';
-import { Observable } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,6 +21,7 @@ import { CustomRouteReuseStrategy } from './custom-reuse-strategy';
 import { MaterialModule } from './landing/material.module';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { SharedAuthenticationService } from 'fastcode-shared-service';
+import { MainLayoutComponent } from './main-layout/main-layout.component';
 
 
 // Dynamic translation loader
@@ -34,7 +34,8 @@ export function RemoteTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    TestComponent
+    TestComponent,
+    MainLayoutComponent
   ],
   imports: [
     BrowserModule,

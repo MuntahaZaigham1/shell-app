@@ -20,7 +20,7 @@ export const authConfig: OpenIdConfiguration = {
   silentRenewUrl: window.location.origin + '/assets/silent-refresh.html',
   postLogoutRedirectUri: window.location.origin,
   // postLoginRoute: '/home',
-  forbiddenRoute: '/',
+  // forbiddenRoute: '/',
   unauthorizedRoute: '/',
   // logConsoleWarningActive: true,
   logLevel: LogLevel.Debug,

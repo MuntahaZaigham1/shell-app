@@ -136,8 +136,8 @@ export class AuthenticationService {
       this.http.get<any>(this.apiUrl + '/auth/getAuthorizationToken').subscribe((token) => {
         console.log(token.token);
         const redirectUrl = sessionStorage.getItem("redirectUrl");
+        sessionStorage.removeItem("redirectUrl");
         if (redirectUrl) {
-          sessionStorage.removeItem("redirectUrl");
           this.router.navigateByUrl(redirectUrl);
         }
         localStorage.setItem('Authorization', token.token);
