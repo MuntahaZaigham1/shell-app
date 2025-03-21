@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angula
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { SharedNavigationService } from 'fastcode-shared-service';
 import { AuthenticationService } from '../core/services/authentication.service';
 import { CookieService } from '../core/services/cookie.service';
 
@@ -22,7 +21,6 @@ export class MainLayoutComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private translate: TranslateService,
         private cd: ChangeDetectorRef,
-        private sharedNavService: SharedNavigationService,
         private cookieService: CookieService
     ) {
         translate.addLangs(["en", "fr"]);
@@ -57,11 +55,7 @@ export class MainLayoutComponent implements OnInit {
                 console.log('Navigation:', event);
             }
         });
-        this.sharedNavService.navigation$.subscribe((path: any) => {
-            if (path) {
-                this.sharedNavService.navigate(path);
-            }
-        });
+       
     }
 
     private extractRemoteName(url: string): string | null {
