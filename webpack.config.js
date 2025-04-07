@@ -2,7 +2,8 @@ const { share, shareAll, withModuleFederationPlugin } = require('@angular-archit
 
 ModuleFederationConfigPlugin = withModuleFederationPlugin({
   remotes: {
-    "fast-code": "https://127.0.0.1:4300/remoteEntry.js"
+    "fast-code": "https://127.0.0.1:4300/remoteEntry.js",
+    "ui-builder": "http://127.0.0.1:4500/remoteEntry.js"
   },
   shared: share({
     "zone.js": { singleton: true, strictVersion: true, requiredVersion: '0.11.8', eager: true },

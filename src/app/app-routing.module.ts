@@ -57,6 +57,15 @@ const routes: Routes = [
           }).then((m) => m.FastcodeModule),
       },
       {
+        path: 'ui',
+        loadChildren: () =>
+          loadRemoteModule({
+            type: 'manifest',
+            remoteName: 'uiBuilder',
+            exposedModule: './Module',
+          }).then((m) => m.UibuilderModule),
+      },
+      {
         path: "core",
         loadChildren: () => import("./core/core.module").then((m) => m.CoreModule),
       },
