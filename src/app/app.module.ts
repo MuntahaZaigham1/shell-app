@@ -22,6 +22,8 @@ import { MaterialModule } from './landing/material.module';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { SharedAuthenticationService } from 'fastcode-shared-service';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
+import { ScriptLoadingService } from './services/script-loading.service';
+import { StylesLoadingService } from './services/styles-loading.service';
 
 
 // Dynamic translation loader
@@ -62,7 +64,9 @@ export function RemoteTranslateLoader(http: HttpClient) {
     OidcSecurityService,
     ConfigurationService,
     TranslateService,
-    { provide: LocationStrategy, useClass: PathLocationStrategy }
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
+    ScriptLoadingService,
+    StylesLoadingService
   ],
   bootstrap: [AppComponent]
 })

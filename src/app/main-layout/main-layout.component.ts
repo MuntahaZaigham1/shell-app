@@ -4,6 +4,8 @@ import { filter } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from '../core/services/authentication.service';
 import { CookieService } from '../core/services/cookie.service';
+import { ScriptLoadingService } from '../services/script-loading.service';
+import { StylesLoadingService } from '../services/styles-loading.service';
 
 
 @Component({
@@ -15,19 +17,16 @@ import { CookieService } from '../core/services/cookie.service';
 export class MainLayoutComponent implements OnInit {
     title = 'shell-app';
     pageTitle = 'Shell'; // Default title
-    currentRemoteStyles: string | null = null; // Track the active remote style
-    stylesMap: { [key: string]: string } = {
-        'fast-code': 'https://127.0.0.1:4300/styles.css',
-        'studio': 'http://localhost:4202/styles.css',
-        'tool1': 'http://localhost:4201/styles.css',
-        'uibuilder': 'https://127.0.0.1:4500/styles.css',
-    };
+    showMicrofrontend = true;
+
     constructor(
         private router: Router,
         private authenticationService: AuthenticationService,
         private translate: TranslateService,
         private cd: ChangeDetectorRef,
-        private cookieService: CookieService
+        private cookieService: CookieService,
+        private scriptLoadingService: ScriptLoadingService,
+        private stylesLoadingService: StylesLoadingService
     ) {
         translate.addLangs(["en", "fr"]);
         translate.setDefaultLang('en');
@@ -42,10 +41,12 @@ export class MainLayoutComponent implements OnInit {
             if (event instanceof NavigationEnd) {
                 const remoteName = this.extractRemoteName(event.url);
                 if (remoteName) {
-                    this.loadRemoteStyles(remoteName);
+                    this.stylesLoadingService.loadRemoteStyles(remoteName);
+                    this.scriptLoadingService.loadRemoteScripts(remoteName);
                 }
                 else {
-                    this.deleteAllRemoteStyles();
+                    this.stylesLoadingService.deleteAllRemoteStyles();
+                    this.scriptLoadingService.deleteAllRemoteScripts();
                 }
                 setTimeout(() => this.showMicrofrontend = true, 0); // Render new MF
             }
@@ -60,7 +61,6 @@ export class MainLayoutComponent implements OnInit {
         this.router.navigateByUrl(urltoNavigate);
     }
 
-    showMicrofrontend = true;
     ngOnInit() {
     }
 
@@ -70,38 +70,6 @@ export class MainLayoutComponent implements OnInit {
         if (url.includes('/codegen')) return 'fast-code';
         if (url.includes('/ui')) return 'uibuilder';
         return null;
-    }
-
-    deleteAllRemoteStyles() {
-        const stylesMap: { [key: string]: string } = { ...this.stylesMap };
-        Object.keys(stylesMap).forEach(key => {
-            this.deleteRemoteStyles(key);
-        });
-    }
-
-
-    loadRemoteStyles(remoteName: string) {
-        const stylesMap: { [key: string]: string } = { ...this.stylesMap };
-
-        Object.keys(stylesMap).filter(k => k != remoteName).forEach(key => {
-            this.deleteRemoteStyles(key);
-        });
-
-        if (stylesMap[remoteName]) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = stylesMap[remoteName];
-            link.id = `remote-styles-${remoteName}`;
-            document.head.appendChild(link);
-            this.currentRemoteStyles = remoteName; // Set the active remote style
-        }
-    }
-
-    deleteRemoteStyles(remoteName: string) {
-        const link = document.getElementById(`remote-styles-${remoteName}`);
-        if (link) {
-            link.remove();
-        }
     }
 
     logoff() {
