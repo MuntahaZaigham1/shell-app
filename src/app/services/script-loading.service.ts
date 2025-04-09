@@ -19,7 +19,8 @@ export class ScriptLoadingService {
             'https://127.0.0.1:4500/assets/js/bootstrap.min.js',
             'https://127.0.0.1:4500/assets/js/jszip.js',
             'https://127.0.0.1:4500/assets/js/fileSaver.js',
-            'https://127.0.0.1:4500/assets/js/myjs.js'
+            'https://127.0.0.1:4500/assets/js/myjs.js',
+            'https://127.0.0.1:4500/assets/sass.sync.js'
         ]
     };
 

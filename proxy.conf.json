@@ -1,0 +1,15 @@
+{
+  "/google-fonts": {
+    "target": "https://www.googleapis.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/google-fonts": "/webfonts/v1/webfonts"
+    }
+  },
+  "/assets/svgIcons": {
+    "target": "https://127.0.0.1:4500",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

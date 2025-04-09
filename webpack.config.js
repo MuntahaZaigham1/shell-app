@@ -14,6 +14,7 @@ ModuleFederationConfigPlugin = withModuleFederationPlugin({
     "@ngx-translate/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "@ngx-translate/http-loader": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "fastcode-shared-service": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    "sass.js": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
   })
 });
 
