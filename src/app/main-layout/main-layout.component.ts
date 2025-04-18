@@ -43,12 +43,13 @@ export class MainLayoutComponent implements OnInit {
                 if (remoteName) {
                     this.stylesLoadingService.loadRemoteStyles(remoteName);
                     this.scriptLoadingService.loadRemoteScripts(remoteName);
+                    setTimeout(() => this.showMicrofrontend = true, 0); // Render new MF
                 }
                 else {
                     this.stylesLoadingService.deleteAllRemoteStyles();
                     this.scriptLoadingService.deleteAllRemoteScripts();
+                    setTimeout(() => this.showMicrofrontend = true, 0); // Render new MF
                 }
-                setTimeout(() => this.showMicrofrontend = true, 0); // Render new MF
             }
             if (event) {
                 console.log('Navigation:', event);

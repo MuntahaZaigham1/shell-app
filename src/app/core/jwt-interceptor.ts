@@ -16,7 +16,7 @@ export class JwtInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // add authorization header with jwt token if available
 
-        request = request.clone({ headers: request.headers.set('Accept', 'application/json') });
+        request = request.clone({ headers: request.headers.set('Accept', 'application/json'), body: request.body });
         if (request.url.search('https://login.microsoftonline.com') == -1) {
             let headers: any = {
                 "X-XSRF-TOKEN": this.cookieService.get("XSRF-TOKEN"),
@@ -32,7 +32,8 @@ export class JwtInterceptor implements HttpInterceptor {
 
             request = request.clone({
                 withCredentials: true,
-                setHeaders: headers
+                setHeaders: headers,
+                body: request.body
             });
         }
         return next.handle(request);

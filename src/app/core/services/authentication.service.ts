@@ -101,6 +101,10 @@ export class AuthenticationService {
   }
 
   get idToken(): string | null {
+    if (this.isTokenExpired(this.token)) {
+      localStorage.removeItem("Authentication");
+      return null;
+    }
     return this.token;
   }
 
