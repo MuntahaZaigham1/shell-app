@@ -80,13 +80,12 @@ export class AuthenticationService {
   }
 
   logout() {
-    localStorage.removeItem('permissions');
-    localStorage.removeItem('Authorization');
+    localStorage.clear();
     this.cookieService.delete('Authentication');
     this.oidcSecurityService.logoff();
   }
   getLoggedinUserId(): number | undefined {
-    let token = localStorage.getItem('Authorization') || '';
+    let token = this.authorizationToken;
     let decodedToken: ITokenDetail = this.decodePassedToken(token);
     return decodedToken?.id;
   }
@@ -128,7 +127,7 @@ export class AuthenticationService {
     }
   }
 
-  decodePassedToken(token: string): ITokenDetail {
+  decodePassedToken(token: any): ITokenDetail {
     let decodedToken: ITokenDetail = helper.decodeToken(token) as ITokenDetail;
     return decodedToken;
   }
@@ -137,6 +136,10 @@ export class AuthenticationService {
   setLoggedInUserPermissions(idToken: any) {
     if (idToken) {
       this.token = idToken;
+      if (!idToken.startsWith("Bearer_")) {
+        idToken = "Bearer_" + idToken;
+      }
+      this.cookieService.set('Authentication', idToken);
       this.http.get<any>(this.apiUrl + '/auth/getAuthorizationToken').subscribe((token) => {
         console.log(token.token);
         const redirectUrl = sessionStorage.getItem("redirectUrl");
