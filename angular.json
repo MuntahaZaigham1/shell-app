@@ -88,7 +88,10 @@
 						"proxyConfig": "proxy.conf.json",
 						"port": 4200,
 						"publicHost": "http://localhost:4200",
-						"extraWebpackConfig": "webpack.config.js"
+						"extraWebpackConfig": "webpack.config.js",
+						"ssl": true,
+						"sslKey": "./localhost-key.pem",
+  						"sslCert": "./localhost.pem"
 					}
 				},
 				"extract-i18n": {
