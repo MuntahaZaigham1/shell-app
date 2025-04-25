@@ -76,9 +76,28 @@ export class AppModule {
     private router: Router,
     private sharedAuthenticationService: SharedAuthenticationService
   ) {
-    this.authenticationService.configure();
+    // this.authenticationService.configure();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
 
     this.sharedAuthenticationService.sendAuthToken(this.authenticationService.idToken);
+
+    window.addEventListener('message', (event) => {
+      console.log("Message received in iframe:", event);
+      if (event.data.command === 'setToken') {
+        // Store the token in your Angular app's auth service
+        this.authenticationService.setLoggedInUserPermissions(event.data.token)
+        console.log("setTojken", this.authenticationService.idToken);
+      }
+    });
+
+    setTimeout(() => {
+      if (!this.authenticationService.token) {
+        window.parent.postMessage({ command: 'requestToken' }, '*');
+      }
+    }, 2000);
+  
+    // Request token from parent (VS Code webview)
+    window.parent.postMessage({ command: 'getToken' }, '*');
+    console.log("hello", this.authenticationService.idToken);
   }
 }

@@ -8,14 +8,14 @@ import { MainLayoutComponent } from './main-layout/main-layout.component';
 
 
 const routes: Routes = [
-  {
-    path: "",
-    loadChildren: () => import("./landing/landing.module").then((m) => m.LandingModule),
-    data: {
-      from: "beforeLogin"
-    },
-    canActivate: [LandingGuard]
-  },
+  // {
+  //   path: "",
+  //   loadChildren: () => import("./landing/landing.module").then((m) => m.LandingModule),
+  //   data: {
+  //     from: "beforeLogin"
+  //   },
+  //   canActivate: [LandingGuard]
+  // },
   {
     path: "",
     component: MainLayoutComponent,

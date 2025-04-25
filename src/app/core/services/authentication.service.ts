@@ -107,6 +107,10 @@ export class AuthenticationService {
     return this.token;
   }
 
+  set idToken(token) {
+    this.idToken = token;
+  }
+
 
   decodeToken(): ITokenDetail {
     if (this.decodedToken) {
@@ -153,6 +157,9 @@ export class AuthenticationService {
         localStorage.setItem('permissions', JSON.stringify(permissions));
         this.permissionService.refreshPermissions();
         this.permissionsChange.next('');
+        if(!redirectUrl) {
+          this.router.navigate(['home']);
+        }
       }, this.handleError);
     }
   }

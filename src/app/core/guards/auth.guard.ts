@@ -12,14 +12,14 @@ export class AuthGuard implements CanActivate {
       if (this.authenticationService.isTokenExpired(this.authenticationService.token)) {
         localStorage.removeItem("Authentication");
         sessionStorage.setItem("redirectUrl", state.url);  // Only store if not logged in
-        this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+        this.router.navigate(['/not-authorized'], { queryParams: { returnUrl: state.url } });
         return false;
       }
       return true;
     }
     else {
       sessionStorage.setItem("redirectUrl", state.url);  // Only store if not logged in
-      this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+      this.router.navigate(['/not-authorized'], { queryParams: { returnUrl: state.url } });
       return false;
     }
   }
