@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { throwError, Subject, Observable } from 'rxjs';
-import { catchError, filter, map, takeUntil } from 'rxjs/operators';
+import { throwError, Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Router } from '@angular/router';
-import { OidcSecurityService, ConfigurationService } from 'angular-auth-oidc-client';
-// import { ITokenDetail } from '../models/itoken-detail';
-// import { UserService } from 'src/app/user/user-service';
-// import { PermissionService } from './permission.service';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { CookieService } from './cookie.service';
 import { PermissionService } from './permission.service';
 import { ITokenDetail } from '../model/itoken-detail';
+import { SharedService } from 'fastcode-shared-service';
 
 const API_URL = environment.apiUrl;
 const helper = new JwtHelperService();
@@ -25,54 +23,74 @@ export class AuthenticationService {
   authChange: Subject<string> = new Subject<string>();
   private readonly _destroying$ = new Subject<void>();
 
-  // private decodedToken: ITokenDetail;
   permissionsChange: Subject<string> = new Subject<string>();
   private apiUrl = API_URL;
-  private _reqOptionsArgs = {
-    withCredentials: true,
-    headers: new HttpHeaders().set('Content-Type', 'application/json').append('Access-Control-Allow-Origin', '*')
-  };
-
 
   private decodedToken: ITokenDetail = {};
   token = '';
-
+  // private sharedService;
   constructor(
     private http: HttpClient,
     private router: Router,
-    // private broadcastService: MsalBroadcastService,
-    // private authService: MsalService,
     public oidcSecurityService: OidcSecurityService,
-    // private userService: UserService,
     private permissionService: PermissionService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    // private injector: Injector
+    private sharedService: SharedService
   ) {
-    // this.oidcSecurityService.userData$.subscribe(userData => {
-    //   if (userData) {
-    //     console.log('🔄 Token renewed:', userData);
-    //     this.setLoggedInUserPermissions(userData?.userData?.idToken);
-    //   }
-    // });
+    // this.sharedService =  new SharedService(window);
+  }
+
+  public isVsCodeExtension(): boolean {
+    return window.parent !== window;
+  }
+
+  public initializeTokenListener(): void {
+    window.addEventListener('message', (event) => {
+      console.log("shell recved a msg from iframe");
+      if (event.data?.command === 'setToken') {
+        if (event?.data?.token) {
+          this.initializeAuth(event.data.token);
+        }
+      }
+      if (event.data?.command === 'sessionCleared') {
+        this.logout();
+        console.log("shell logging out -sending msg to uibuilder");
+        this.sharedService.sendMessage({ command: "shell-logged-out", for: "allTools" });
+        console.log("shell logging out -sent msg to uibuilder");
+      }
+    });
+
+    this.sharedService.listenMessage(msg => {
+      console.log("shell recved a msg from uibuilder", msg);
+      if (msg.command === "ui-builder-logged-out" && msg.for === "shell") {
+        console.log("shell sending msg back to iframe/webview", msg);
+        window.parent.postMessage(
+          {
+            command: 'logoutComplete'
+          },
+          '*'
+        );
+      }
+    })
+
+    setTimeout(() => {
+      if (!this.token) {
+        window.parent.postMessage({ command: 'requestToken' }, '*');
+      }
+    }, 2000);
+
+    window.parent.postMessage({ command: 'getToken' }, '*');
   }
 
   configure() {
     this.oidcSecurityService.getAuthenticationResult().subscribe((res) => {
       if (res) {
-        console.log("User Authorized");
         this.token = res?.id_token;
-        // this.setLoggedInUserPermissions(res?.idToken);
-      }
-      else {
+      } else {
         console.error("Authorization failed");
-        // this.router.navigate(['/not-authorized']);
       }
     });
-
-  }
-
-  private getQueryParamValue(param: string, url: string): string | null {
-    const urlParams = new URLSearchParams(url.split('?')[1]);
-    return urlParams.get(param);
   }
 
   login(user: any, redirectPath?: any) {
@@ -81,9 +99,13 @@ export class AuthenticationService {
 
   logout() {
     localStorage.clear();
+    sessionStorage.clear();
     this.cookieService.delete('Authentication');
-    this.oidcSecurityService.logoff();
+    if (!this.isVsCodeExtension()) {
+      this.oidcSecurityService.logoff();
+    }
   }
+
   getLoggedinUserId(): number | undefined {
     let token = this.authorizationToken;
     let decodedToken: ITokenDetail = this.decodePassedToken(token);
@@ -100,34 +122,41 @@ export class AuthenticationService {
   }
 
   get idToken(): string | null {
-    if (this.isTokenExpired(this.token)) {
-      localStorage.removeItem("Authentication");
+    const token = this.isVsCodeExtension() ? sessionStorage.getItem("Authentication") : this.cookieService.get('Authentication');
+    if (this.isTokenExpired(token)) {
+      sessionStorage.removeItem("Authentication");
+      this.cookieService.delete('Authentication');
       return null;
     }
-    return this.token;
+    return token;
   }
 
-  set idToken(token) {
-    this.idToken = token;
+  set idToken(token: string | null) {
+    this.token = token || '';
+    if (this.isVsCodeExtension()) {
+      sessionStorage.setItem("Authentication", token || '');
+    }
+    else {
+      this.cookieService.set('Authentication', this.token);
+    }
   }
-
 
   decodeToken(): ITokenDetail {
     if (this.decodedToken) {
       let permissions: string = localStorage.getItem("permissions") || '[]';
       this.decodedToken.scopes = JSON.parse(permissions) || [];
       return this.decodedToken;
-    }
-    else {
-      if (this.token) {
-        let decodedToken: ITokenDetail = helper.decodeToken(this.token) as ITokenDetail;
+    } else {
+      const currentToken = this.idToken;
+      if (currentToken) {
+        let decodedToken: ITokenDetail = helper.decodeToken(currentToken) as ITokenDetail;
         let permissions: string = localStorage.getItem("permissions") || '[]';
         decodedToken.scopes = JSON.parse(permissions) || [];
         this.decodedToken = decodedToken;
         return this.decodedToken;
-      }
-      else
+      } else {
         return {};
+      }
     }
   }
 
@@ -136,51 +165,50 @@ export class AuthenticationService {
     return decodedToken;
   }
 
-
-  setLoggedInUserPermissions(idToken: any) {
+  initializeAuth(idToken: string | null) {
     if (idToken) {
-      this.token = idToken;
       if (!idToken.startsWith("Bearer_")) {
         idToken = "Bearer_" + idToken;
       }
-      this.cookieService.set('Authentication', idToken);
-      this.http.get<any>(this.apiUrl + '/auth/getAuthorizationToken').subscribe((token) => {
-        console.log(token.token);
-        const redirectUrl = sessionStorage.getItem("redirectUrl");
-        sessionStorage.removeItem("redirectUrl");
-        if (redirectUrl) {
-          this.router.navigateByUrl(redirectUrl);
-        }
-        localStorage.setItem('Authorization', token.token);
-        const decodedToken = this.decodePassedToken(token.token);
-        const permissions = decodedToken ? decodedToken.scopes : [];
-        localStorage.setItem('permissions', JSON.stringify(permissions));
-        this.permissionService.refreshPermissions();
-        this.permissionsChange.next('');
-        if(!redirectUrl) {
-          this.router.navigate(['home']);
-        }
-      }, this.handleError);
+      this.token = idToken;
+      this.idToken = this.token;
+      this.getAuthorizationCode();
     }
+  }
+
+  getAuthorizationCode() {
+    this.http.get<any>(this.apiUrl + '/auth/getAuthorizationToken').subscribe((token) => {
+      const redirectUrl = sessionStorage.getItem("redirectUrl");
+      sessionStorage.removeItem("redirectUrl");
+      if (redirectUrl) {
+        this.router.navigateByUrl(redirectUrl);
+      }
+      localStorage.setItem('Authorization', token.token);
+      const decodedToken = this.decodePassedToken(token.token);
+      const permissions = decodedToken ? decodedToken.scopes : [];
+      localStorage.setItem('permissions', JSON.stringify(permissions));
+      this.permissionService.refreshPermissions();
+      this.permissionsChange.next('');
+      if (!redirectUrl && this.isVsCodeExtension()) {
+        this.router.navigate(['home']);
+      }
+    }, this.handleError);
   }
 
   getTokenExpirationDate(token: string): Date | null {
     const decoded = helper.decodeToken(token);
-
     if (decoded.exp === undefined) {
       return null;
     }
-
     const date = new Date(0);
     date.setUTCSeconds(decoded.exp);
     return date;
   }
 
-  isTokenExpired(token?: string): boolean | undefined {
+  isTokenExpired(token?: string | null): boolean | undefined {
     if (!token) {
       return true;
     }
-
     const date: Date | null = this.getTokenExpirationDate(token);
     if (date === undefined) {
       return false;
@@ -189,10 +217,8 @@ export class AuthenticationService {
   }
 
   private handleError(err: HttpErrorResponse) {
-
     let errorMessage = '';
     if (err.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
       errorMessage = `An error occurred: ${err.error.message}`;
     } else {
       errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
@@ -202,8 +228,8 @@ export class AuthenticationService {
   }
 
   ngOnDestroy(): void {
+    this.sharedService.unsubscribe();
     this._destroying$.next(undefined);
     this._destroying$.complete();
   }
-
 }

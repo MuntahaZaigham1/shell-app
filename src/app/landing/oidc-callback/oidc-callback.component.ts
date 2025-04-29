@@ -15,7 +15,7 @@ export class OidcCallbackComponent {
 		this.oidcSecurityService.checkAuthIncludingServer().subscribe(({ isAuthenticated, idToken }) => {
 			if (isAuthenticated) {
 				console.log('User is authenticated');
-				this.authService.setLoggedInUserPermissions(idToken);
+				this.authService.initializeAuth(idToken);
 				// this.router.navigate([window.location.toString()]);
 			} else {
 				this.router.navigate(['not-authorized']);

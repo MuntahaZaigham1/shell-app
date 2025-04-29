@@ -22,10 +22,9 @@ export class JwtInterceptor implements HttpInterceptor {
                 "X-XSRF-TOKEN": this.cookieService.get("XSRF-TOKEN"),
                 Accept: 'application/json'
             }
-            // const idToken = this.authService.idToken;
-            // if (idToken) {
-            //     this.cookieService.set('Authentication', idToken ? ("Bearer_" + idToken) : idToken);
-            // }
+            if(this.authService.isVsCodeExtension()){
+                headers["Authentication"] = this.authService.idToken;
+            }
             if (this.authService.authorizationToken) {
                 headers["Authorization"] = this.authService.authorizationToken;
             }

@@ -20,7 +20,7 @@ import { Router, RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './custom-reuse-strategy';
 import { MaterialModule } from './landing/material.module';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { SharedAuthenticationService } from 'fastcode-shared-service';
+import { SharedAuthenticationService, SharedService } from 'fastcode-shared-service';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { ScriptLoadingService } from './services/script-loading.service';
 import { StylesLoadingService } from './services/styles-loading.service';
@@ -66,38 +66,20 @@ export function RemoteTranslateLoader(http: HttpClient) {
     TranslateService,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     ScriptLoadingService,
-    StylesLoadingService
+    StylesLoadingService,
+    SharedService
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(private authenticationService: AuthenticationService,
-    private injector: Injector,
     private router: Router,
-    private sharedAuthenticationService: SharedAuthenticationService
   ) {
     // this.authenticationService.configure();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
 
-    this.sharedAuthenticationService.sendAuthToken(this.authenticationService.idToken);
+    // this.sharedAuthenticationService.sendAuthToken(this.authenticationService.idToken);
 
-    window.addEventListener('message', (event) => {
-      console.log("Message received in iframe:", event);
-      if (event.data.command === 'setToken') {
-        // Store the token in your Angular app's auth service
-        this.authenticationService.setLoggedInUserPermissions(event.data.token)
-        console.log("setTojken", this.authenticationService.idToken);
-      }
-    });
-
-    setTimeout(() => {
-      if (!this.authenticationService.token) {
-        window.parent.postMessage({ command: 'requestToken' }, '*');
-      }
-    }, 2000);
-  
-    // Request token from parent (VS Code webview)
-    window.parent.postMessage({ command: 'getToken' }, '*');
-    console.log("hello", this.authenticationService.idToken);
+    this.authenticationService.initializeTokenListener();
   }
 }

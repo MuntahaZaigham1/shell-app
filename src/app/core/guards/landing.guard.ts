@@ -17,7 +17,10 @@ export class LandingGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      if (this.authenticationService.token) {
+      if (this.authenticationService.token && this.authenticationService.isVsCodeExtension()) {
+        this.router.navigate(['/home']);
+      }
+      else if(state.url == "/" && this.authenticationService.isVsCodeExtension()){
         this.router.navigate(['/home']);
       }
       else if(state.url == "/"){
