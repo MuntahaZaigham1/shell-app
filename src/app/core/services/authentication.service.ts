@@ -63,24 +63,24 @@ export class AuthenticationService {
 
     this.sharedService.listenMessage(msg => {
       console.log("shell recved a msg from uibuilder", msg);
-      if (msg.command === "ui-builder-logged-out" && msg.for === "shell") {
+      if (msg.command === "token-expired" && msg.for === "shell") {
         console.log("shell sending msg back to iframe/webview", msg);
         window.parent.postMessage(
           {
-            command: 'logoutComplete'
+            command: 'getToken'
           },
           '*'
         );
       }
     })
 
-    setTimeout(() => {
-      if (!this.token) {
-        window.parent.postMessage({ command: 'requestToken' }, '*');
-      }
-    }, 2000);
+    // setTimeout(() => {
+    //   if (!this.token) {
+    //     window.parent.postMessage({ command: 'requestToken' }, '*');
+    //   }
+    // }, 2000);
 
-    window.parent.postMessage({ command: 'getToken' }, '*');
+    window.parent.postMessage({ command: 'getStoredToken' }, '*');
   }
 
   configure() {
@@ -123,7 +123,10 @@ export class AuthenticationService {
 
   get idToken(): string | null {
     const token = this.isVsCodeExtension() ? sessionStorage.getItem("Authentication") : this.cookieService.get('Authentication');
-    if (this.isTokenExpired(token)) {
+    if (this.isTokenExpired(token) && this.isVsCodeExtension()) {
+      return null;
+    }
+    if (this.isTokenExpired(token) && !this.isVsCodeExtension()) {
       sessionStorage.removeItem("Authentication");
       this.cookieService.delete('Authentication');
       return null;

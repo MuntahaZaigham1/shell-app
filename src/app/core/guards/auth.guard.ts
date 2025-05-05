@@ -7,20 +7,21 @@ export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService
-  ) {}
+  ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const token = this.authenticationService.idToken;
-
     if (token) {
-      if (this.authenticationService.isTokenExpired(token)) {
-        this.clearToken();
-        this.logout(state);
-        return false;
-      }
       return true;
     } else {
-      this.logout(state);
+      if (this.authenticationService.isVsCodeExtension()) {
+        this.getNewToken();
+      }
+      else {
+        this.setRedirectUrl(state.url);
+        this.clearToken();
+        this.authenticationService.logout();
+      }
       return false;
     }
   }
@@ -34,14 +35,7 @@ export class AuthGuard implements CanActivate {
     sessionStorage.setItem("redirectUrl", url);
   }
 
-  logout(state: any) {
-    this.setRedirectUrl(state.url);
-    this.authenticationService.logout();
-    window.parent.postMessage(
-      {
-        command: 'logoutComplete'
-      },
-      '*'
-    );
+  getNewToken() {
+    window.parent.postMessage({ command: 'getToken' }, '*');
   }
 }

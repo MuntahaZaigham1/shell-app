@@ -22,7 +22,7 @@ export class JwtInterceptor implements HttpInterceptor {
                 "X-XSRF-TOKEN": this.cookieService.get("XSRF-TOKEN"),
                 Accept: 'application/json'
             }
-            if(this.authService.isVsCodeExtension()){
+            if(this.authService.isVsCodeExtension() && this.authService.idToken){
                 headers["Authentication"] = this.authService.idToken;
             }
             if (this.authService.authorizationToken) {
