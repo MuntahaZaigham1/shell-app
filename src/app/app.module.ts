@@ -24,6 +24,7 @@ import { SharedAuthenticationService, SharedService } from 'fastcode-shared-serv
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { ScriptLoadingService } from './services/script-loading.service';
 import { StylesLoadingService } from './services/styles-loading.service';
+import { RedirectAfterLoginComponent } from './redirect-after-login.component';
 
 
 // Dynamic translation loader
@@ -37,7 +38,8 @@ export function RemoteTranslateLoader(http: HttpClient) {
   declarations: [
     AppComponent,
     TestComponent,
-    MainLayoutComponent
+    MainLayoutComponent,
+    RedirectAfterLoginComponent 
   ],
   imports: [
     BrowserModule,

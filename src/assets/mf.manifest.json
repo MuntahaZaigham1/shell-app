@@ -1,3 +1,4 @@
 {
-	"uiBuilder": "https://127.0.0.1:4500/remoteEntry.js"	
+	"uiBuilder": "https://127.0.0.1:4500/remoteEntry.js",	
+	"fast-code": "https://127.0.0.1:4300/remoteEntry.js"	
 }

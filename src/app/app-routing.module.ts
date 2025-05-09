@@ -5,9 +5,15 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { TestComponent } from './test/test.component';
 import { loadRemoteModule } from '@angular-architects/module-federation';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
+import { RedirectAfterLoginComponent } from './redirect-after-login.component';
 
 
 const routes: Routes = [
+  {
+    path: "redirect-after-login",
+    component: RedirectAfterLoginComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: "",
     loadChildren: () => import("./landing/landing.module").then((m) => m.LandingModule),
@@ -15,6 +21,11 @@ const routes: Routes = [
       from: "beforeLogin"
     },
     canActivate: [LandingGuard]
+  },
+  {
+    path: "projects",
+    loadChildren: () => import("./projects/projects.module").then((m) => m.ProjectsModule),
+    canActivate: [AuthGuard]
   },
   {
     path: "",

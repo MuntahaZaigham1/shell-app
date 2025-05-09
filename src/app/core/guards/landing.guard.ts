@@ -18,10 +18,10 @@ export class LandingGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       if (this.authenticationService.token && this.authenticationService.isVsCodeExtension()) {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/redirect-after-login']);
       }
       else if(state.url == "/" && this.authenticationService.isVsCodeExtension()){
-        this.router.navigate(['/home']);
+        this.router.navigate(['/redirect-after-login']);
       }
       else if(state.url == "/"){
         this.router.navigate(['/login']);

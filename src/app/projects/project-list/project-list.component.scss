@@ -1,0 +1,52 @@
+:host {
+    display: block;
+    height: 100vh;
+    background: linear-gradient(to right, #ece9e6, #ffffff);
+  }
+  
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #1976d2;
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .toolbar-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  
+  .main-container {
+    padding: 24px;
+  }
+  
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+  }
+  
+  .project-grid {
+    margin-top: 24px;
+  }
+  
+  .project-card {
+    transition: box-shadow 0.3s ease;
+    &:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  .grid-responsive {
+    @media (min-width: 600px) {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+  }
+  
+  .mat-grid-list {
+    height: 197px;
+    width: 229px;
+  }

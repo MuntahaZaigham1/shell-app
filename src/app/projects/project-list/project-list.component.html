@@ -1,0 +1,41 @@
+<mat-toolbar color="primary" class="toolbar">
+    <span class="toolbar-title">Projects</span>
+</mat-toolbar>
+<div class="main-container">
+
+    <div *ngIf="loading" class="spinner-container">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading" class="project-grid">
+        <mat-grid-list cols="1" gutterSize="16px" rowHeight="fit" class="grid-responsive"
+            [ngClass]="{ 'grid-md': projects.length > 1 }">
+            <mat-grid-tile *ngFor="let project of projects">
+                <mat-card class="project-card">
+                    <mat-card-header>
+                        <mat-card-title>{{ project.name }}</mat-card-title>
+                        <mat-card-subtitle>ID: {{ project.id }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p><strong>Users:</strong> {{ project.assignedUsers?.length || 0 }}</p>
+                        <p><strong>Active User:</strong> {{ project.activeUser?.emailAddress || 'None' }}</p>
+                    </mat-card-content>
+                    <mat-card-actions align="end">
+                        <button mat-stroked-button color="accent" (click)="openAssignDialog(project)"
+                            matTooltip="Assign users to project">
+                            <mat-icon>group_add</mat-icon> Assign
+                        </button>
+                        <button mat-icon-button color="primary" (click)="toggleLock(project, true)"
+                            matTooltip="Lock project">
+                            <mat-icon>lock</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="toggleLock(project, false)"
+                            matTooltip="Unlock project">
+                            <mat-icon>lock_open</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+</div>

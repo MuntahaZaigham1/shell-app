@@ -193,7 +193,8 @@ export class AuthenticationService {
       this.permissionService.refreshPermissions();
       this.permissionsChange.next('');
       if (!redirectUrl && this.isVsCodeExtension()) {
-        this.router.navigate(['home']);
+        // this.router.navigate(['projects']);
+        this.router.navigate(['redirect-after-login']);
       }
     }, this.handleError);
   }
