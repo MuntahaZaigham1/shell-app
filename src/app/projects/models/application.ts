@@ -3,7 +3,7 @@ export interface User {
     emailAddress: string;
   }
   
-  export interface Project {
+  export interface Application {
     id: number;
     name: string;
     uiBuilderProjectId?: number;

@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ProjectService } from '../project.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Project } from '../models/project';
-import { BehaviorSubject, finalize, Observable, tap } from 'rxjs';
+import { finalize, Observable, tap } from 'rxjs';
+import { Application } from '../models/application';
+import { ApplicationService } from '../application.service';
 
 @Component({
     selector: 'app-assign-users-dialog',
@@ -15,29 +15,29 @@ export class AssignUsersDialogComponent implements OnInit {
     form: FormGroup;
     users: any[] = [];
     loading = false;
-    project: Project;
+    application: Application;
     userList$: Observable<any[]> = new Observable();
 
     constructor(
         private dialogRef: MatDialogRef<AssignUsersDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fb: FormBuilder,
-        private projectService: ProjectService,
+        private appService: ApplicationService,
         private snackBar: MatSnackBar
     ) {
         this.form = this.fb.group({
             assignedUsers: [[]]
         });
-        this.project = this.data?.project;
+        this.application = this.data?.app;
     }
 
 
     ngOnInit(): void {
-        this.userList$ = this.projectService.getAllUsers().pipe(
+        this.userList$ = this.appService.getAllUsers().pipe(
             tap((users) => {
                 this.users = users;
 
-                const assignedUsers = (this.project.assignedUsers || [])
+                const assignedUsers = (this.application.assignedUsers || [])
                     .map((assigned: any) => users.find((u: any) => u.id === assigned.id))
                     .filter(Boolean);  // remove undefined entries if any
 
@@ -48,13 +48,13 @@ export class AssignUsersDialogComponent implements OnInit {
     }
 
     isUserAssigned(userId: number): boolean {
-        return (this.project.assignedUsers || []).some(u => u.id === userId);
+        return (this.application.assignedUsers || []).some(u => u.id === userId);
     }
 
 
     save(): void {
         const selectedUserIds = this.form.value.assignedUsers;
-        this.projectService.assignUsers(this.project.id, selectedUserIds).subscribe({
+        this.appService.assignUsers(this.application.id, selectedUserIds).subscribe({
             next: () => {
                 this.snackBar.open('Users assigned successfully', 'Close');
                 this.dialogRef.close(true);
