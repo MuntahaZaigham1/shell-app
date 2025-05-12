@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProjectService } from '../project.service';
 import { AuthenticationService } from 'src/app/core/services/authentication.service';
 import { Project } from '../models/project';
+import { AssignUsersDialogComponent } from '../assign-users-dialog/assign-users-dialog.component';
 
 @Component({
   selector: 'app-project-list',
@@ -35,15 +36,15 @@ export class ProjectListComponent implements OnInit {
   }
 
   openAssignDialog(project: any): void {
-    // this.dialog.open(AssignUsersDialogComponent, {
-    //   data: { project }
-    // }).afterClosed().subscribe(reload => reload && this.loadProjects());
+    this.dialog.open(AssignUsersDialogComponent, {
+      data: { project }
+    }).afterClosed().subscribe(reload => reload && this.loadProjects());
   }
   
 
   toggleLock(project: Project, lock: boolean): void {
     const userId: any = this.authenticationService.getLoggedinUserId(); // Replace with current user ID
-    this.projectService.toggleLock(project.projectId, userId, lock).subscribe({
+    this.projectService.toggleLock(project.id, userId, lock).subscribe({
       next: () => {
         this.snackBar.open(`Project ${lock ? 'locked' : 'unlocked'}`, 'Close');
         this.loadProjects();

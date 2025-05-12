@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { User } from './models/project';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
@@ -29,5 +30,9 @@ export class ProjectService {
 
   getActiveUser(projectId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/${projectId}/active-user`);
+  }
+
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/user?offset=0&limit=100`);
   }
 }

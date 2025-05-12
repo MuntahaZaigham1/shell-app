@@ -5,7 +5,6 @@ export interface User {
   
   export interface Project {
     id: number;
-    projectId: number;
     name: string;
     uiBuilderProjectId?: number;
     uiBuilderClientId?: number;

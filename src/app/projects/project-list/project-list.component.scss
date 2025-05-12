@@ -2,51 +2,56 @@
     display: block;
     height: 100vh;
     background: linear-gradient(to right, #ece9e6, #ffffff);
-  }
-  
-  .toolbar {
+}
+
+.mat-card-actions {
+    padding-bottom: 16px !important;
+}
+
+.toolbar {
     position: sticky;
     top: 0;
     z-index: 10;
     background-color: #1976d2;
     color: white;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  }
-  
-  .toolbar-title {
+}
+
+.toolbar-title {
     font-size: 1.5rem;
     font-weight: 500;
-  }
-  
-  .main-container {
+}
+
+.main-container {
     padding: 24px;
-  }
-  
-  .spinner-container {
+}
+
+.spinner-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 60vh;
-  }
-  
-  .project-grid {
+}
+
+.project-grid {
     margin-top: 24px;
-  }
-  
-  .project-card {
+}
+
+.project-card {
     transition: box-shadow 0.3s ease;
+
     &:hover {
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
-  }
-  
-  .grid-responsive {
+}
+
+.grid-responsive {
     @media (min-width: 600px) {
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     }
-  }
-  
-  .mat-grid-list {
-    height: 197px;
+}
+
+.mat-grid-list {
+    height: 255px;
     width: 229px;
-  }
+}
