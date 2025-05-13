@@ -34,4 +34,15 @@ export class ApplicationService {
   getAllUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${environment.apiUrl}/user?offset=0&limit=100`);
   }
+
+  addGithubUrl(id: number, githubUrl: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/github-url`, null, {
+      params: { githubUrl }
+    });
+  }
+  
+  getGithubUrl(id: number): Observable<string> {
+    return this.http.get(`${this.baseUrl}/${id}/github-url`, { responseType: 'text' });
+  }
+  
 }
