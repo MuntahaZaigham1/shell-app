@@ -19,7 +19,7 @@ export class ApplicationListComponent implements OnInit {
     private appService: ApplicationService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
   ) {}
 
   ngOnInit(): void {
@@ -51,5 +51,9 @@ export class ApplicationListComponent implements OnInit {
       },
       error: () => this.snackBar.open('Error updating lock state', 'Close')
     });
+  }
+
+  checkoutFromGit(app: Application) {
+    window.parent.postMessage({command: "checkoutFromGit", data: app}, '*');
   }
 }

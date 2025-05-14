@@ -25,6 +25,7 @@ import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { ScriptLoadingService } from './services/script-loading.service';
 import { StylesLoadingService } from './services/styles-loading.service';
 import { RedirectAfterLoginComponent } from './redirect-after-login.component';
+import { VsCodeExtCommunicationService } from './services/vs-code-ext-communication.service';
 
 
 // Dynamic translation loader

@@ -23,7 +23,7 @@ const routes: Routes = [
     canActivate: [LandingGuard]
   },
   {
-    path: "projects",
+    path: "applications",
     loadChildren: () => import("./projects/applications.module").then((m) => m.ApplicationsModule),
     canActivate: [AuthGuard]
   },

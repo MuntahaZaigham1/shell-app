@@ -38,7 +38,7 @@
                         </button>
 
                         <mat-menu #appMenu="matMenu">
-                            <button mat-menu-item>
+                            <button mat-menu-item (click)="checkoutFromGit(app)">
                                 <mat-icon>cloud_download</mat-icon>
                                 <span>Check Out from Git</span>
                             </button>
