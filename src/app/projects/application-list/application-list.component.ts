@@ -5,6 +5,8 @@ import { AuthenticationService } from 'src/app/core/services/authentication.serv
 import { AssignUsersDialogComponent } from '../assign-users-dialog/assign-users-dialog.component';
 import { Application } from '../models/application';
 import { ApplicationService } from '../application.service';
+import { Router } from '@angular/router';
+import { InitializeToolsService } from 'src/app/services/initialize-tools.service';
 
 @Component({
   selector: 'app-application-list',
@@ -20,6 +22,7 @@ export class ApplicationListComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private authenticationService: AuthenticationService,
+    private initializeToolsService: InitializeToolsService
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +57,15 @@ export class ApplicationListComponent implements OnInit {
   }
 
   checkoutFromGit(app: Application) {
-    window.parent.postMessage({command: "checkoutFromGit", data: app}, '*');
+    window.parent.postMessage({command: "checkoutAppFromGit", data: app}, '*');
+  }
+
+  openFromLocal(app: Application) {
+    window.parent.postMessage({command: "checkoutAppFromLocal", data: app}, '*');
+  }
+
+  openTools(app: Application) {
+    //assuming that this project is already opened in the vscode window and user just wants to open the tools
+    this.initializeToolsService.initializePortal(app)
   }
 }

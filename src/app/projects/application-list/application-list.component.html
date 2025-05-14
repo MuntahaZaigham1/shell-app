@@ -42,11 +42,11 @@
                                 <mat-icon>cloud_download</mat-icon>
                                 <span>Check Out from Git</span>
                             </button>
-                            <button mat-menu-item>
+                            <button mat-menu-item (click)="openFromLocal(app)">
                                 <mat-icon>folder_open</mat-icon>
                                 <span>Open from Local</span>
                             </button>
-                            <button mat-menu-item>
+                            <button mat-menu-item (click)="openTools(app)">
                                 <mat-icon>build</mat-icon>
                                 <span>Open Tools Window</span>
                             </button>
