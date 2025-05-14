@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LandingGuard } from './core/guards/landing.guard';
 import { AuthGuard } from './core/guards/auth.guard';
-import { TestComponent } from './test/test.component';
 import { loadRemoteModule } from '@angular-architects/module-federation';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { RedirectAfterLoginComponent } from './redirect-after-login.component';
+import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
@@ -33,11 +33,7 @@ const routes: Routes = [
     children: [
       { path: "", redirectTo: "home", pathMatch: "full" },
       {
-        path: "home", component: TestComponent,
-        canActivate: [AuthGuard],
-      },
-      {
-        path: "health", component: TestComponent,
+        path: "home", component: HomeComponent,
         canActivate: [AuthGuard],
       },
       {
@@ -50,15 +46,6 @@ const routes: Routes = [
           }).then((m) => m.StudioModule),
       },
       {
-        path: 'tool1',
-        loadChildren: () =>
-          loadRemoteModule({
-            type: 'manifest',
-            remoteName: 'tool1',
-            exposedModule: './Module',
-          }).then((m) => m.Tool1Module)
-      },
-      {
         path: 'codegen',
         loadChildren: () =>
           loadRemoteModule({
@@ -66,6 +53,7 @@ const routes: Routes = [
             remoteName: 'fast-code',
             exposedModule: './Module',
           }).then((m) => m.FastcodeModule),
+          canActivate: [AuthGuard],
       },
       {
         path: 'ui',

@@ -9,7 +9,6 @@ import { authConfig } from 'src/environments/environment';
 import { JwtInterceptor } from './core/jwt-interceptor';
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { CoreModule } from './core/core.module';
-import { TestComponent } from './test/test.component';
 import { AuthenticationService } from './core/services/authentication.service';
 import { AuthGuard } from './core/guards/auth.guard';
 import { LandingGuard } from './core/guards/landing.guard';
@@ -26,6 +25,7 @@ import { ScriptLoadingService } from './services/script-loading.service';
 import { StylesLoadingService } from './services/styles-loading.service';
 import { RedirectAfterLoginComponent } from './redirect-after-login.component';
 import { VsCodeExtCommunicationService } from './services/vs-code-ext-communication.service';
+import { HomeComponent } from './home/home.component';
 
 
 // Dynamic translation loader
@@ -38,7 +38,7 @@ export function RemoteTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    TestComponent,
+    HomeComponent,
     MainLayoutComponent,
     RedirectAfterLoginComponent 
   ],
