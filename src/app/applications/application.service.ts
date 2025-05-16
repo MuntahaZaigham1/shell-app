@@ -2,47 +2,63 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Application } from './models/application';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationService {
+
   private baseUrl = environment.apiUrl + '/api/applications';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getApplications(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}`);
+  getApplications(): Observable<Application[]> {
+    return this.http.get<Application[]>(`${this.baseUrl}`);
   }
 
-  assignUsers(id: number, userIds: number[]): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${id}/assign-users`, userIds);
+  getApplicationById(id: number | undefined): Observable<Application> {
+    return this.http.get<Application>(`${this.baseUrl}/${id}`);
   }
 
-  assignAllUsers(id: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${id}/assign-all-users`, {});
+  assignUsers(id: number, userIds: number[]): Observable<Application> {
+    return this.http.post<Application>(`${this.baseUrl}/${id}/assign-users`, userIds);
   }
 
-  toggleLock(id: number, userId: any, lock: boolean): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}/toggle-lock`, null, {
+  assignAllUsers(id: number): Observable<Application> {
+    return this.http.post<Application>(`${this.baseUrl}/${id}/assign-all-users`, {});
+  }
+
+  toggleLock(id: number, userId: any, lock: boolean): Observable<Application> {
+    return this.http.put<Application>(`${this.baseUrl}/${id}/toggle-lock`, null, {
       params: { userId, lock }
     });
   }
 
-  getActiveUser(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}/active-user`);
+  getActiveUser(id: number): Observable<Application> {
+    return this.http.get<Application>(`${this.baseUrl}/${id}/active-user`);
   }
 
-  getAllUsers(): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}/user?offset=0&limit=100`);
+  getAllUsers(): Observable<Application[]> {
+    return this.http.get<Application[]>(`${environment.apiUrl}/user?offset=0&limit=100`);
   }
 
-  addGithubUrl(id: number, githubUrl: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}/github-url`, null, {
+  addGithubUrl(id: number, githubUrl: string): Observable<Application> {
+    return this.http.put<Application>(`${this.baseUrl}/${id}/github-url`, null, {
       params: { githubUrl }
     });
   }
-  
+
   getGithubUrl(id: number): Observable<string> {
     return this.http.get(`${this.baseUrl}/${id}/github-url`, { responseType: 'text' });
   }
+
+  createApplication(name: string): Observable<Application> {
+    return this.http.post<Application>(`${this.baseUrl}/create`, null, {
+      params: { name }
+    });
+  }
   
+  deleteAppByid(metadataId: any) {
+    return this.http.delete<Application>(`${this.baseUrl}/${metadataId}`);
+  }
+
 }

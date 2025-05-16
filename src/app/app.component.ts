@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedNavigationService } from 'fastcode-shared-service';
+import { ShellHelperService } from './services/shell-helper.service';
 
 
 @Component({
@@ -10,6 +11,8 @@ import { SharedNavigationService } from 'fastcode-shared-service';
 })
 export class AppComponent implements OnInit {
   title: string = "";
+  showMicrofrontend: boolean = false;
+  
   ngOnInit() {
     this.sharedNavService.navigation$.subscribe((path: any) => {
       if (path) {
@@ -20,5 +23,19 @@ export class AppComponent implements OnInit {
 
   constructor(
     private sharedNavService: SharedNavigationService,
-  ) { }
+    private shellHelper: ShellHelperService
+  ) {
+    this.shellHelper.initLanguageSupport();
+    this.shellHelper.subscribeToRouterEvents(
+      () => (this.shellHelper.unloadAssets()),
+      (remoteName) => {
+        if (remoteName) {
+          this.shellHelper.loadAssets(remoteName);
+          this.showMicrofrontend = true;
+        } else {
+          this.shellHelper.unloadAssets();
+        }
+      }
+    );
+  }
 }

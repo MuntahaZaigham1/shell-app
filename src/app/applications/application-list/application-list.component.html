@@ -1,5 +1,9 @@
 <mat-toolbar color="primary" class="toolbar">
     <span class="toolbar-title">Applications</span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="accent" (click)="createNewApplication()" style="margin-right:100px;">
+        <mat-icon>add</mat-icon> Create New Application
+    </button>
 </mat-toolbar>
 <div class="main-container">
 
@@ -25,12 +29,10 @@
                             matTooltip="Assign users to app">
                             <mat-icon>group_add</mat-icon> Assign
                         </button>
-                        <button mat-icon-button color="primary" (click)="toggleLock(app, true)"
-                            matTooltip="Lock app">
+                        <button mat-icon-button color="primary" (click)="toggleLock(app, true)" matTooltip="Lock app">
                             <mat-icon>lock</mat-icon>
                         </button>
-                        <button mat-icon-button color="warn" (click)="toggleLock(app, false)"
-                            matTooltip="Unlock app">
+                        <button mat-icon-button color="warn" (click)="toggleLock(app, false)" matTooltip="Unlock app">
                             <mat-icon>lock_open</mat-icon>
                         </button>
                         <button mat-icon-button [matMenuTriggerFor]="appMenu" aria-label="app Options">

@@ -3,7 +3,9 @@
     height: 100vh;
     background: linear-gradient(to right, #ece9e6, #ffffff);
 }
-
+.spacer {
+    flex: 1 1 auto;
+}
 .mat-card-actions {
     padding-bottom: 16px !important;
 }

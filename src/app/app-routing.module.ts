@@ -28,6 +28,16 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'codegen',
+    loadChildren: () =>
+      loadRemoteModule({
+        type: 'manifest',
+        remoteName: 'fast-code',
+        exposedModule: './Module',
+      }).then((m) => m.FastcodeModule),
+      canActivate: [AuthGuard],
+  },
+  {
     path: "",
     component: MainLayoutComponent,
     children: [
@@ -44,16 +54,6 @@ const routes: Routes = [
             remoteName: 'studio',
             exposedModule: './StudioModule',
           }).then((m) => m.StudioModule),
-      },
-      {
-        path: 'codegen',
-        loadChildren: () =>
-          loadRemoteModule({
-            type: 'manifest',
-            remoteName: 'fast-code',
-            exposedModule: './Module',
-          }).then((m) => m.FastcodeModule),
-          canActivate: [AuthGuard],
       },
       {
         path: 'ui',

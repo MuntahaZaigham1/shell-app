@@ -7,6 +7,7 @@ import { Application } from '../models/application';
 import { ApplicationService } from '../application.service';
 import { Router } from '@angular/router';
 import { InitializeToolsService } from 'src/app/services/initialize-tools.service';
+import { SharedService } from 'fastcode-shared-service';
 
 @Component({
   selector: 'app-application-list',
@@ -22,11 +23,21 @@ export class ApplicationListComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private authenticationService: AuthenticationService,
-    private initializeToolsService: InitializeToolsService
+    private initializeToolsService: InitializeToolsService,
+    private sharedService: SharedService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadApps();
+    this.sharedService.listenMessage(msg=>{
+      if(msg?.command == "application-creation-cancelled" && msg?.for=="shell") {
+        const metadataId = msg?.payload?.id;
+        this.appService.deleteAppByid(metadataId)?.subscribe(()=>{
+          console.log("app-deleted");
+        })
+      }
+    })
   }
 
   loadApps(): void {
@@ -66,6 +77,19 @@ export class ApplicationListComponent implements OnInit {
 
   openTools(app: Application) {
     //assuming that this project is already opened in the vscode window and user just wants to open the tools
-    this.initializeToolsService.initializePortal(app)
+    this.initializeToolsService.initializePortal({id: app?.id, name: app?.name})
   }
+
+  createNewApplication() { 
+    this.router.navigate(['/codegen/fastcode/create-app/1']); 
+    // this.appService.createApplication('changemyname').subscribe({
+    //   next: (createdApp) => {
+    //     this.applications.push(createdApp); // Optionally refresh list from API instead
+    //   },
+    //   error: (err) => {
+    //     console.error('Failed to create application', err);
+    //   }
+    // });
+  }
+  
 }
