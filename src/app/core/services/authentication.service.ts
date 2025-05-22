@@ -232,7 +232,6 @@ export class AuthenticationService {
   }
 
   ngOnDestroy(): void {
-    this.sharedService.unsubscribe();
     this._destroying$.next(undefined);
     this._destroying$.complete();
   }

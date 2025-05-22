@@ -21,7 +21,6 @@ export class MainLayoutComponent implements OnInit {
         private router: Router,
         private authService: AuthenticationService,
         private cookieService: CookieService,
-        private toolService: InitializeToolsService,
         private shellHelper: ShellHelperService
     ) {
 
@@ -39,7 +38,6 @@ export class MainLayoutComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.toolService.sendAppDataToTools();
     }
 
     changeTitle(title: string, url: string): void {

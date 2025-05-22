@@ -56,6 +56,10 @@ export class ApplicationService {
       params: { name }
     });
   }
+
+  updateApplication(id: number, updatedApplication: Application): Observable<Application> {
+    return this.http.put<Application>(`${this.baseUrl}/update/${id}`, updatedApplication);
+  }
   
   deleteAppByid(metadataId: any) {
     return this.http.delete<Application>(`${this.baseUrl}/${metadataId}`);

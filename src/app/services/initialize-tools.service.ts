@@ -8,6 +8,8 @@ import { Application, ApplicationMetadata } from '../applications/models/applica
     providedIn: 'root'
 })
 export class InitializeToolsService {
+    private appDataSent = false;
+    private messageSubscription: any;
 
     constructor(
         private router: Router,
@@ -22,7 +24,8 @@ export class InitializeToolsService {
             this.appService.getApplicationById(metadata?.id).subscribe((application: Application) => {
                 this.router.navigate(['home']).then(() => {
                     localStorage.setItem("currentAppId", application?.id?.toString());
-                    this.toolsSharedService.sendMessage({ command: "shell-application-metadata", payload: application, for: "all-tools" });
+                    this.sendAppDataToTools();
+                    // this.toolsSharedService.sendMessage({ command: "shell-application-metadata", payload: application, for: "all-tools" });
                 })
             })
         }
@@ -32,13 +35,42 @@ export class InitializeToolsService {
     }
 
     sendAppDataToTools() {
-        this.toolsSharedService.listenMessage(msg => {
+        if (this.appDataSent) {
+            return; // ✅ prevent repeated sends
+        }
+        this.appDataSent = true;
+
+        // Clean up previous listener if exists
+        if (this.messageSubscription) {
+            this.messageSubscription.unsubscribe();
+        }
+
+        this.messageSubscription = this.toolsSharedService.listenMessage(msg => {
             if (msg?.command == "getApplication" && msg?.for == "shell") {
                 let appId = localStorage.getItem("currentAppId");
                 this.appService.getApplicationById(appId ? Number(appId) : undefined).subscribe((application: Application) => {
                     this.toolsSharedService.sendMessage({ command: "shell-application-metadata", payload: application, for: "all-tools" });
                 })
             }
+            if (msg?.command == "ui-builder-project-created" && msg?.for == "shell") {
+                this.appService.getApplicationById(msg?.payload?.id ? Number(msg?.payload?.id) : undefined).subscribe((application: Application) => {
+                    let updatedApplication = {
+                        ...application
+                    }
+                    updatedApplication.uiBuilderClientId = msg?.payload?.uiBuilderClientId;
+                    updatedApplication.uiBuilderProjectId = msg?.payload?.uiBuilderProjectId;
+                    this.appService.updateApplication(msg?.payload?.id, updatedApplication).subscribe(res => {
+                        console.log("application from uibuilder updated successfully!!")
+                    })
+                })
+
+            }
         })
+    }
+
+    ngOnDestroy() {
+        if (this.messageSubscription) {
+            this.messageSubscription.unsubscribe();
+        }
     }
 }

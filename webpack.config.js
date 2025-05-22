@@ -13,7 +13,7 @@ ModuleFederationConfigPlugin = withModuleFederationPlugin({
     "@angular/material": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "@ngx-translate/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "@ngx-translate/http-loader": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    "fastcode-shared-service": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    "fastcode-shared-service": { singleton: true, strictVersion: true, requiredVersion: 'auto'},
   })
 });
 

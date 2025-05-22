@@ -1,53 +1,63 @@
-import { Inject, Injectable, InjectionToken, ɵgetInjectableDef } from '@angular/core';
+import { Inject, Injectable, InjectionToken } from '@angular/core';
 
 export interface MessageType {
-    command: string;
-    payload?: any;
-    for: string;
+  command: string;
+  payload?: any;
+  for: string;
 }
 
-
-// Create an InjectionToken for Window
 export const WINDOW = new InjectionToken<Window>('Window', {
-    providedIn: 'root',
-    factory: () => window // This will provide the global window object
-  });
+  providedIn: 'root',
+  factory: () => window
+});
 
-@Harden(SharedService)
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class SharedService {
-    private listener?: (event: MessageEvent) => void;
+  private static instance: SharedService | null = null;
+  private listeners = new Map<Function, (event: MessageEvent) => void>();
 
-    constructor(@Inject(WINDOW) private targetWindow: Window) {
-        console.log('SharedService instance created');
+  constructor(@Inject(WINDOW) private targetWindow: Window) {
+    if (SharedService.instance) {
+      return SharedService.instance;
     }
+    SharedService.instance = this;
+    console.log('SharedService initialized - Singleton enforced');
+  }
 
-    sendMessage(message: MessageType) {
-        this.targetWindow.postMessage(message, '*');
+  sendMessage(message: MessageType): void {
+    this.targetWindow.postMessage(message, '*');
+  }
+
+  listenMessage(handler: (message: MessageType) => void): { unsubscribe: () => void } {
+    const wrappedListener = (event: MessageEvent) => {
+      if (event.data?.command) {
+        handler(event.data);
+      }
+    };
+
+    this.listeners.set(handler, wrappedListener);
+    this.targetWindow.addEventListener('message', wrappedListener);
+
+    return {
+      unsubscribe: () => this.removeListener(handler)
+    };
+  }
+
+  private removeListener(handler: Function): void {
+    const listener = this.listeners.get(handler);
+    if (listener) {
+      this.targetWindow.removeEventListener('message', listener);
+      this.listeners.delete(handler);
     }
+  }
 
-    listenMessage(handler: (message: MessageType) => void) {
-        this.listener = (event: MessageEvent) => {
-            if (event.data && event.data.command) {
-                handler(event.data);
-            }
-        };
-        window.addEventListener('message', this.listener);
-    }
-
-    unsubscribe() {
-        if (this.listener) {
-            window.removeEventListener('message', this.listener);
-            this.listener = undefined;
-        }
-    }
-}
-
-function Harden(target: any): any {
-    let def = ɵgetInjectableDef(target) as any;
-    const newFactory = def.factory;
-    let value = undefined as any | undefined;
-    def.factory = () => { value = value == undefined ? newFactory() : value; return value; };
+  destroy(): void {
+    this.listeners.forEach((listener, handler) => {
+      this.targetWindow.removeEventListener('message', listener);
+    });
+    this.listeners.clear();
+    SharedService.instance = null;
+  }
 }
