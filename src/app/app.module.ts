@@ -26,6 +26,7 @@ import { StylesLoadingService } from './services/styles-loading.service';
 import { RedirectAfterLoginComponent } from './redirect-after-login.component';
 import { VsCodeExtCommunicationService } from './services/vs-code-ext-communication.service';
 import { HomeComponent } from './home/home.component';
+import { ApplicationService } from './applications/application.service';
 
 
 // Dynamic translation loader
@@ -70,7 +71,8 @@ export function RemoteTranslateLoader(http: HttpClient) {
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     ScriptLoadingService,
     StylesLoadingService,
-    SharedService
+    SharedService,
+    ApplicationService
   ],
   bootstrap: [AppComponent]
 })

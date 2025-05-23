@@ -113,9 +113,9 @@ export class AuthenticationService {
   }
 
   get authorizationToken(): string | null {
-    const authToken = localStorage.getItem("Authorization") || '';
+    const authToken = sessionStorage.getItem("Authorization") || '';
     if (this.isTokenExpired(authToken)) {
-      localStorage.removeItem("Authorization");
+      sessionStorage.removeItem("Authorization");
       return null;
     }
     return authToken;
@@ -186,7 +186,7 @@ export class AuthenticationService {
       if (redirectUrl) {
         this.router.navigateByUrl(redirectUrl);
       }
-      localStorage.setItem('Authorization', token.token);
+      sessionStorage.setItem('Authorization', token.token);
       const decodedToken = this.decodePassedToken(token.token);
       const permissions = decodedToken ? decodedToken.scopes : [];
       localStorage.setItem('permissions', JSON.stringify(permissions));
