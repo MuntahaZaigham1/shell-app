@@ -81,6 +81,7 @@ export class ApplicationListComponent implements OnInit {
   }
 
   createNewApplication() { 
+    //whenever create a new application from codegen set set uibuilder client id (any random id)
     this.router.navigate(['/codegen/fastcode/create-app/1']); 
     // this.appService.createApplication('changemyname').subscribe({
     //   next: (createdApp) => {
