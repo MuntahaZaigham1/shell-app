@@ -14,7 +14,8 @@ ModuleFederationConfigPlugin = withModuleFederationPlugin({
     "@ngx-translate/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "@ngx-translate/http-loader": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
     "fastcode-shared-service": { singleton: true, strictVersion: true, requiredVersion: 'auto'},
-  })
+  }),
+  sharedMappings: ['zone.js'] // Explicitly share Zone.js
 });
 
 ModuleFederationConfigPlugin.devServer = {
