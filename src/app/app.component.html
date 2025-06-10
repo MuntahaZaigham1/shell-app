@@ -1,3 +1,13 @@
-<div>
+<!-- <div>
   <router-outlet></router-outlet>
+</div> -->
+
+<div class="addon-list">
+  <h3>Select Add-On</h3>
+  <div *ngFor="let addon of addons">
+    <button (click)="requestFiles(addon)">
+      {{ addon }}
+    </button>
+  </div>
 </div>
+
