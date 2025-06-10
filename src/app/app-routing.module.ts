@@ -47,13 +47,13 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'studio',
+        path: 'apiBuilder',
         loadChildren: () =>
           loadRemoteModule({
             type: 'manifest',
             remoteName: 'studio',
-            exposedModule: './StudioModule',
-          }).then((m) => m.StudioModule),
+            exposedModule: './AppModule',
+          }).then((m) => m.AppModule),
       },
       {
         path: 'ui',

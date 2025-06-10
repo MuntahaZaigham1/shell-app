@@ -38,7 +38,7 @@ export class ShellHelperService {
     }
 
     private extractRemoteName(url: string): string | null {
-        if (url.includes('/studio')) return 'studio';
+        if (url.includes('/apiBuilder')) return 'apiBuilder';
         if (url.includes('/tool1')) return 'tool1';
         if (url.includes('/codegen')) return 'fast-code';
         if (url.includes('/ui')) return 'uibuilder';

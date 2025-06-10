@@ -7,7 +7,7 @@ export class StylesLoadingService {
 
     stylesMap: { [key: string]: string } = {
         'fast-code': 'https://127.0.0.1:4300/styles.css',
-        'studio': 'http://localhost:4202/styles.css',
+        'apiBuilder': 'https://localhost:3030/styles.css',
         'tool1': 'http://localhost:4201/styles.css',
         'uibuilder': 'https://127.0.0.1:4500/styles.css',
     };

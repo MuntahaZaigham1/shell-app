@@ -25,6 +25,10 @@ export class ScriptLoadingService {
             'https://127.0.0.1:4500/assets/js/fileSaver.js',
             'https://127.0.0.1:4500/assets/js/myjs.js',
             // 'https://127.0.0.1:4500/assets/sass.sync.js',
+        ],
+        'apiBuilder': [
+            "https://127.0.0.1:3030/version.js",
+            "https://127.0.0.1:3030/config.js"
         ]
     };
 
