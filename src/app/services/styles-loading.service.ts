@@ -5,44 +5,47 @@ import { Injectable } from '@angular/core';
 })
 export class StylesLoadingService {
 
-    stylesMap: { [key: string]: string } = {
-        'fast-code': 'https://127.0.0.1:4300/styles.css',
-        'apiBuilder': 'https://localhost:3030/styles.css',
-        'tool1': 'http://localhost:4201/styles.css',
-        'uibuilder': 'https://127.0.0.1:4500/styles.css',
+    stylesMap: { [key: string]: string[] } = {
+        'fast-code': ['https://127.0.0.1:4300/styles.css'],
+        'apiBuilder': [
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css',
+            'https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700,800,900&display=swap',
+            'https://127.0.0.1:3030/styles.css',
+        ],
+        'tool1': ['http://localhost:4201/styles.css'],
+        'uibuilder': ['https://127.0.0.1:4500/styles.css'],
     };
 
-    constructor() {
-    }
+    constructor() { }
 
     loadRemoteStyles(remoteName: string) {
-        const stylesMap: { [key: string]: string } = { ...this.stylesMap };
+        this.deleteAllRemoteStylesExcept(remoteName);
 
-        Object.keys(stylesMap).filter(k => k != remoteName).forEach(key => {
-            this.deleteRemoteStyles(key);
-        });
-
-        if (stylesMap[remoteName]) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = stylesMap[remoteName];
-            link.id = `remote-styles-${remoteName}`;
-            document.head.appendChild(link);
+        const styleUrls = this.stylesMap[remoteName];
+        if (styleUrls?.length) {
+            styleUrls.forEach(url => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = url;
+                link.setAttribute('data-tool', remoteName); // <-- use data attribute
+                document.head.appendChild(link);
+            });
         }
     }
 
     deleteRemoteStyles(remoteName: string) {
-        const link = document.getElementById(`remote-styles-${remoteName}`);
-        if (link) {
-            link.remove();
-        }
+        const links = document.querySelectorAll(`link[data-tool="${remoteName}"]`);
+        links.forEach(link => link.remove());
     }
 
     deleteAllRemoteStyles() {
-        const stylesMap: { [key: string]: string } = { ...this.stylesMap };
-        Object.keys(stylesMap).forEach(key => {
-            this.deleteRemoteStyles(key);
-        });
+        Object.keys(this.stylesMap).forEach(tool => this.deleteRemoteStyles(tool));
     }
 
+    private deleteAllRemoteStylesExcept(remoteName: string) {
+        Object.keys(this.stylesMap)
+            .filter(tool => tool !== remoteName)
+            .forEach(tool => this.deleteRemoteStyles(tool));
+    }
 }

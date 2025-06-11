@@ -21,7 +21,7 @@
         <span>{{ pageTitle }}</span>
       </mat-toolbar>
   
-      <div *ngIf="showMicrofrontend" style="height:100%">
+      <div *ngIf="showMicrofrontend" [ngClass]="remoteCssClass" style="height:100%">
         <router-outlet></router-outlet>
       </div>
   

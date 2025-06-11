@@ -16,6 +16,7 @@ export class MainLayoutComponent implements OnInit {
     title = 'shell-app';
     pageTitle = 'Shell';
     showMicrofrontend = true;
+    remoteCssClass = '';
 
     constructor(
         private router: Router,
@@ -25,11 +26,16 @@ export class MainLayoutComponent implements OnInit {
     ) {
 
         this.shellHelper.subscribeToRouterEvents(
-            () => (this.showMicrofrontend = false),
+            () => {
+                this.showMicrofrontend = false;
+                this.remoteCssClass = '';
+            },
             (remoteName) => {
                 if (remoteName) {
+                    this.remoteCssClass = remoteName; // This will be applied to the div
                     this.shellHelper.loadAssets(remoteName);
                 } else {
+                    this.remoteCssClass = '';
                     this.shellHelper.unloadAssets();
                 }
                 setTimeout(() => (this.showMicrofrontend = true), 0);
