@@ -28,7 +28,10 @@ export class ScriptLoadingService {
         ],
         'apiBuilder': [
             "https://127.0.0.1:3030/version.js",
-            "https://127.0.0.1:3030/config.js"
+            "https://127.0.0.1:3030/config.js",
+            "https://127.0.0.1:3030/assets/lib/jquery.js",
+            "https://127.0.0.1:3030/assets/lib/bootstrap.js",
+            "https://127.0.0.1:3030/assets/lib/patternfly.js",
         ]
     };
 

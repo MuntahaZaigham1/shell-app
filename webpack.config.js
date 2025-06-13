@@ -2,21 +2,31 @@ const { share, shareAll, withModuleFederationPlugin } = require('@angular-archit
 
 ModuleFederationConfigPlugin = withModuleFederationPlugin({
   remotes: {
-    "fast-code": "https://127.0.0.1:4300/remoteEntry.js",
-    "ui-builder": "https://127.0.0.1:4500/remoteEntry.js",
+    // "fast-code": "https://127.0.0.1:4300/remoteEntry.js",
+    // "ui-builder": "https://127.0.0.1:4500/remoteEntry.js",
     "studio": "https://127.0.0.1:3030/remoteEntry.js"
   },
   shared: share({
-    "zone.js": { singleton: true, strictVersion: true, requiredVersion: '0.11.8', eager: true },
-    "@angular/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    "@angular/common": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    "@angular/router": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    "@angular/material": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    "@ngx-translate/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    "@ngx-translate/http-loader": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
-    "fastcode-shared-service": { singleton: true, strictVersion: true, requiredVersion: 'auto'},
+    // "zone.js": { singleton: true, strictVersion: true, requiredVersion: '0.11.8', eager: true },
+    // "@angular/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@angular/common": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@angular/router": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@angular/material": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@ngx-translate/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "@ngx-translate/http-loader": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    // "fastcode-shared-service": { singleton: true, strictVersion: true, requiredVersion: 'auto'},
+
+     "@angular/core": { singleton: true, strictVersion: true, requiredVersion: '14.3.0' },
+    "@angular/common": { singleton: true, strictVersion: true, requiredVersion: '14.3.0' },
+    "@angular/common/http": { singleton: true, strictVersion: true, requiredVersion: '14.3.0' },
+    "@angular/router": { singleton: true, strictVersion: true, requiredVersion: '14.3.0' },
+    "@angular/platform-browser": { singleton: true, strictVersion: true, requiredVersion: '14.3.0' },
+    "@angular/platform-browser-dynamic": { singleton: true, strictVersion: true, requiredVersion: '14.3.0' },
+    "rxjs": { singleton: true, requiredVersion: 'auto', requiredVersion: '7.5.0' },
+    "zone.js": { singleton: true, eager: true },
+    "fastcode-shared-service": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
   }),
-  sharedMappings: ['zone.js'] // Explicitly share Zone.js
+  // sharedMappings: ['zone.js'] // Explicitly share Zone.js
 });
 
 ModuleFederationConfigPlugin.devServer = {

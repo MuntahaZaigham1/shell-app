@@ -52,8 +52,8 @@ const routes: Routes = [
           loadRemoteModule({
             type: 'manifest',
             remoteName: 'studio',
-            exposedModule: './AppModule',
-          }).then((m) => m.AppModule),
+            exposedModule: './ApiBuilderModule',
+          }).then((m) => m.ApiBuilderModule),
       },
       {
         path: 'ui',
