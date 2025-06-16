@@ -11,7 +11,6 @@ export class StylesLoadingService {
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
             'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css',
             'https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700,800,900&display=swap',
-            'https://127.0.0.1:3030/assets/lib/bootstrap.css',
             'https://127.0.0.1:3030/assets/lib/patternfly.min.css',
             'https://127.0.0.1:3030/assets/lib/patternfly.css',
             'https://127.0.0.1:3030/assets/lib/patternfly-additions.css',
