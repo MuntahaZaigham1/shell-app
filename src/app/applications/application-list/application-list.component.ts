@@ -17,6 +17,15 @@ import { SharedService } from 'fastcode-shared-service';
 export class ApplicationListComponent implements OnInit {
   applications: Application[] = [];
   loading = false;
+  private listenerInitialized = false;
+
+  ngOnInit(): void {
+    this.loadApps();
+    if (!this.listenerInitialized) {
+      this.initializeMessageListener();
+      this.listenerInitialized = true;
+    }
+  }
 
   constructor(
     private appService: ApplicationService,
@@ -26,15 +35,38 @@ export class ApplicationListComponent implements OnInit {
     private initializeToolsService: InitializeToolsService,
     private sharedService: SharedService,
     private router: Router
-  ) {}
+  ) { }
 
-  ngOnInit(): void {
-    this.loadApps();
-    this.sharedService.listenMessage(msg=>{
-      if(msg?.command == "application-creation-cancelled" && msg?.for=="shell") {
+  initializeMessageListener(): void {
+    this.sharedService.listenMessage(msg => {
+      if (msg?.command == "application-creation-cancelled" && msg?.for == "shell") {
         const metadataId = msg?.payload?.id;
-        this.appService.deleteAppByid(metadataId)?.subscribe(()=>{
+        this.appService.deleteAppByid(metadataId)?.subscribe(() => {
           console.log("app-deleted");
+        })
+      }
+      else if (msg?.command == "codegen-application-created-base" && msg?.for == "shell") {
+        //create application in shell & load that in the application's window
+        const metadata = msg.payload.metadata;
+        const zipBlob = msg.payload.zipData;
+        const application: any = {
+          name: metadata?.name,
+          codegenProjectId: metadata?.id
+        }
+
+        this.appService.createApplication(metadata?.name).subscribe((createdApp: Application) => {
+          this.appService.updateApplication(createdApp?.id, application).subscribe(updatedApp => {
+            window.parent.postMessage({
+              command: 'upload-application-to-git',
+              payload: {
+                application: updatedApp,
+                githubRepository: metadata.githubRepository,
+                zip: zipBlob
+              }
+            }, '*');
+
+            this.loadApps();
+          })
         })
       }
     })
@@ -44,7 +76,6 @@ export class ApplicationListComponent implements OnInit {
     this.loading = true;
     this.appService.getApplications().subscribe({
       next: (res) => (this.applications = res),
-      error: () => this.snackBar.open('Error loading applications', 'Close'),
       complete: () => (this.loading = false)
     });
   }
@@ -54,7 +85,7 @@ export class ApplicationListComponent implements OnInit {
       data: { app }
     }).afterClosed().subscribe(reload => reload && this.loadApps());
   }
-  
+
 
   toggleLock(application: Application, lock: boolean): void {
     const userId: any = this.authenticationService.getLoggedinUserId(); // Replace with current user ID
@@ -68,21 +99,21 @@ export class ApplicationListComponent implements OnInit {
   }
 
   checkoutFromGit(app: Application) {
-    window.parent.postMessage({command: "checkoutAppFromGit", data: app}, '*');
+    window.parent.postMessage({ command: "checkoutAppFromGit", data: app }, '*');
   }
 
   openFromLocal(app: Application) {
-    window.parent.postMessage({command: "checkoutAppFromLocal", data: app}, '*');
+    window.parent.postMessage({ command: "checkoutAppFromLocal", data: app }, '*');
   }
 
   openTools(app: Application) {
     //assuming that this project is already opened in the vscode window and user just wants to open the tools
-    this.initializeToolsService.initializePortal({id: app?.id, name: app?.name})
+    this.initializeToolsService.initializePortal({ id: app?.id, name: app?.name })
   }
 
-  createNewApplication() { 
+  createNewApplication() {
     //whenever create a new application from codegen set set uibuilder client id (any random id)
-    this.router.navigate(['/codegen/fastcode/create-app/1']); 
+    this.router.navigate(['/codegen/fastcode/create-app/1']);
     // this.appService.createApplication('changemyname').subscribe({
     //   next: (createdApp) => {
     //     this.applications.push(createdApp); // Optionally refresh list from API instead
@@ -92,5 +123,5 @@ export class ApplicationListComponent implements OnInit {
     //   }
     // });
   }
-  
+
 }
