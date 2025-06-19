@@ -1,61 +1,48 @@
 <mat-toolbar color="primary" class="toolbar">
-    <span class="toolbar-title">Applications</span>
-    <span class="spacer"></span>
-    <button mat-raised-button color="accent" (click)="createNewApplication()" style="margin-right:100px;">
-        <mat-icon>add</mat-icon> Create New Application
-    </button>
+  <span class="toolbar-title">Applications</span>
+  <span class="spacer"></span>
+  <button mat-raised-button color="accent" style="margin-right:100px;" (click)="createNewApplication()">
+    <mat-icon>add</mat-icon>
+    Create New Application
+  </button>
 </mat-toolbar>
+
 <div class="main-container">
+  <div *ngIf="loading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
 
-    <div *ngIf="loading" class="spinner-container">
-        <mat-spinner></mat-spinner>
-    </div>
-
-    <div *ngIf="!loading" class="app-grid">
-        <mat-grid-list cols="1" gutterSize="16px" rowHeight="fit" class="grid-responsive"
-            [ngClass]="{ 'grid-md': applications.length > 1 }">
-            <mat-grid-tile *ngFor="let app of applications">
-                <mat-card class="app-card">
-                    <mat-card-header>
-                        <mat-card-title>{{ app.name }}</mat-card-title>
-                        <mat-card-subtitle>ID: {{ app.id }}</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content>
-                        <p><strong>Users:</strong> {{ app.assignedUsers?.length || 0 }}</p>
-                        <p><strong>Active User:</strong> {{ app.activeUser?.emailAddress || 'None' }}</p>
-                    </mat-card-content>
-                    <mat-card-actions align="end">
-                        <button mat-stroked-button color="accent" (click)="openAssignDialog(app)"
-                            matTooltip="Assign users to app">
-                            <mat-icon>group_add</mat-icon> Assign
-                        </button>
-                        <button mat-icon-button color="primary" (click)="toggleLock(app, true)" matTooltip="Lock app">
-                            <mat-icon>lock</mat-icon>
-                        </button>
-                        <button mat-icon-button color="warn" (click)="toggleLock(app, false)" matTooltip="Unlock app">
-                            <mat-icon>lock_open</mat-icon>
-                        </button>
-                        <button mat-icon-button [matMenuTriggerFor]="appMenu" aria-label="app Options">
-                            <mat-icon>more_vert</mat-icon>
-                        </button>
-
-                        <mat-menu #appMenu="matMenu">
-                            <button mat-menu-item (click)="checkoutFromGit(app)">
-                                <mat-icon>cloud_download</mat-icon>
-                                <span>Check Out from Git</span>
-                            </button>
-                            <button mat-menu-item (click)="openFromLocal(app)">
-                                <mat-icon>folder_open</mat-icon>
-                                <span>Open from Local</span>
-                            </button>
-                            <button mat-menu-item (click)="openTools(app)">
-                                <mat-icon>build</mat-icon>
-                                <span>Open Tools Window</span>
-                            </button>
-                        </mat-menu>
-                    </mat-card-actions>
-                </mat-card>
-            </mat-grid-tile>
-        </mat-grid-list>
-    </div>
+  <div *ngIf="!loading" class="app-grid">
+    <mat-card class="app-card" *ngFor="let app of applications">
+      <mat-card-header>
+        <mat-card-title>{{ app.name }}</mat-card-title>
+        <mat-card-subtitle>ID: {{ app.id }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p *ngIf="app.githubUrl">
+          <strong>GitHub:</strong>
+          <a href="{{ app.githubUrl }}" target="_blank">{{ app.githubUrl }}</a>
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-icon-button [matMenuTriggerFor]="appMenu" aria-label="App Options">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #appMenu="matMenu">
+          <button mat-menu-item (click)="checkoutFromGit(app)">
+            <mat-icon>cloud_download</mat-icon>
+            <span>Check Out from Git</span>
+          </button>
+          <button mat-menu-item (click)="openFromLocal(app)">
+            <mat-icon>folder_open</mat-icon>
+            <span>Open from Local</span>
+          </button>
+          <button mat-menu-item (click)="openTools(app)">
+            <mat-icon>build</mat-icon>
+            <span>Open Tools Window</span>
+          </button>
+        </mat-menu>
+      </mat-card-actions>
+    </mat-card>
+  </div>
 </div>

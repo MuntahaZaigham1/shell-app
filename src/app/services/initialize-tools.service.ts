@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { SharedService } from 'fastcode-shared-service';
 import { ApplicationService } from '../applications/application.service';
-import { Application, ApplicationMetadata } from '../applications/models/application';
+import { Application } from '../applications/models/application';
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +18,7 @@ export class InitializeToolsService {
     ) {
     }
 
-    initializePortal(metadata: ApplicationMetadata) {
+    initializePortal(metadata: any) {
         console.log("metadata", metadata);
         if (metadata) {
             this.appService.getApplicationById(metadata?.id).subscribe((application: Application) => {

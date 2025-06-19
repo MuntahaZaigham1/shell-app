@@ -1,37 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthenticationService } from 'src/app/core/services/authentication.service';
-import { AssignUsersDialogComponent } from '../assign-users-dialog/assign-users-dialog.component';
 import { Application } from '../models/application';
 import { ApplicationService } from '../application.service';
 import { Router } from '@angular/router';
 import { InitializeToolsService } from 'src/app/services/initialize-tools.service';
 import { SharedService } from 'fastcode-shared-service';
+let isShellListenerRegistered = false;
 
 @Component({
   selector: 'app-application-list',
   templateUrl: './application-list.component.html',
   styleUrls: ['./application-list.component.scss']
 })
-export class ApplicationListComponent implements OnInit {
+export class ApplicationListComponent implements OnInit, OnDestroy {
   applications: Application[] = [];
   loading = false;
-  private listenerInitialized = false;
 
   ngOnInit(): void {
     this.loadApps();
-    if (!this.listenerInitialized) {
+    if (!isShellListenerRegistered) {
       this.initializeMessageListener();
-      this.listenerInitialized = true;
+      isShellListenerRegistered = true;
     }
   }
 
   constructor(
     private appService: ApplicationService,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private authenticationService: AuthenticationService,
     private initializeToolsService: InitializeToolsService,
     private sharedService: SharedService,
     private router: Router
@@ -45,15 +40,16 @@ export class ApplicationListComponent implements OnInit {
           console.log("app-deleted");
         })
       }
-      else if (msg?.command == "codegen-application-created-base" && msg?.for == "shell") {
-        //create application in shell & load that in the application's window
+      else if (msg?.command == "codegen-application-created-base" && msg?.for == "shell" && !isShellListenerRegistered) {
         const metadata = msg.payload.metadata;
         const zipBlob = msg.payload.zipData;
-        const application: any = {
+        const application: Application = {
           name: metadata?.name,
-          codegenProjectId: metadata?.id
+          codegenProjectId: metadata?.id,
+          githubUrl: metadata.githubRepository
         }
-
+        isShellListenerRegistered = true;
+        console.log("createApplication is called", metadata?.name,isShellListenerRegistered);
         this.appService.createApplication(metadata?.name).subscribe((createdApp: Application) => {
           this.appService.updateApplication(createdApp?.id, application).subscribe(updatedApp => {
             window.parent.postMessage({
@@ -80,24 +76,6 @@ export class ApplicationListComponent implements OnInit {
     });
   }
 
-  openAssignDialog(app: any): void {
-    this.dialog.open(AssignUsersDialogComponent, {
-      data: { app }
-    }).afterClosed().subscribe(reload => reload && this.loadApps());
-  }
-
-
-  toggleLock(application: Application, lock: boolean): void {
-    const userId: any = this.authenticationService.getLoggedinUserId(); // Replace with current user ID
-    this.appService.toggleLock(application.id, userId, lock).subscribe({
-      next: () => {
-        this.snackBar.open(`Application ${lock ? 'locked' : 'unlocked'}`, 'Close');
-        this.loadApps();
-      },
-      error: () => this.snackBar.open('Error updating lock state', 'Close')
-    });
-  }
-
   checkoutFromGit(app: Application) {
     window.parent.postMessage({ command: "checkoutAppFromGit", data: app }, '*');
   }
@@ -107,21 +85,14 @@ export class ApplicationListComponent implements OnInit {
   }
 
   openTools(app: Application) {
-    //assuming that this project is already opened in the vscode window and user just wants to open the tools
     this.initializeToolsService.initializePortal({ id: app?.id, name: app?.name })
   }
 
   createNewApplication() {
-    //whenever create a new application from codegen set set uibuilder client id (any random id)
     this.router.navigate(['/codegen/fastcode/create-app/1']);
-    // this.appService.createApplication('changemyname').subscribe({
-    //   next: (createdApp) => {
-    //     this.applications.push(createdApp); // Optionally refresh list from API instead
-    //   },
-    //   error: (err) => {
-    //     console.error('Failed to create application', err);
-    //   }
-    // });
   }
 
+  ngOnDestroy(): void {
+    isShellListenerRegistered = false;
+  }
 }

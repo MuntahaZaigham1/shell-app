@@ -6,7 +6,6 @@ import { Application } from './models/application';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationService {
-
   private baseUrl = environment.apiUrl + '/api/applications';
 
   constructor(private http: HttpClient) { }
@@ -17,28 +16,6 @@ export class ApplicationService {
 
   getApplicationById(id: number | undefined): Observable<Application> {
     return this.http.get<Application>(`${this.baseUrl}/${id}`);
-  }
-
-  assignUsers(id: number, userIds: number[]): Observable<Application> {
-    return this.http.post<Application>(`${this.baseUrl}/${id}/assign-users`, userIds);
-  }
-
-  assignAllUsers(id: number): Observable<Application> {
-    return this.http.post<Application>(`${this.baseUrl}/${id}/assign-all-users`, {});
-  }
-
-  toggleLock(id: number, userId: any, lock: boolean): Observable<Application> {
-    return this.http.put<Application>(`${this.baseUrl}/${id}/toggle-lock`, null, {
-      params: { userId, lock }
-    });
-  }
-
-  getActiveUser(id: number): Observable<Application> {
-    return this.http.get<Application>(`${this.baseUrl}/${id}/active-user`);
-  }
-
-  getAllUsers(): Observable<Application[]> {
-    return this.http.get<Application[]>(`${environment.apiUrl}/user?offset=0&limit=100`);
   }
 
   addGithubUrl(id: number, githubUrl: string): Observable<Application> {
@@ -57,12 +34,11 @@ export class ApplicationService {
     });
   }
 
-  updateApplication(id: number, updatedApplication: Application): Observable<Application> {
+  updateApplication(id: any, updatedApplication: Application): Observable<Application> {
     return this.http.put<Application>(`${this.baseUrl}/update/${id}`, updatedApplication);
   }
   
   deleteAppByid(metadataId: any) {
     return this.http.delete<Application>(`${this.baseUrl}/${metadataId}`);
   }
-
 }
