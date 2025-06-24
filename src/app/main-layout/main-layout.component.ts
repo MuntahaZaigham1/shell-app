@@ -5,6 +5,8 @@ import { AuthenticationService } from '../core/services/authentication.service';
 import { CookieService } from '../core/services/cookie.service';
 import { InitializeToolsService } from '../services/initialize-tools.service';
 import { ShellHelperService } from '../services/shell-helper.service';
+import { ApplicationService } from '../applications/application.service';
+import { Application } from '../applications/models/application';
 
 @Component({
     selector: 'main-layout-component',
@@ -22,7 +24,8 @@ export class MainLayoutComponent implements OnInit {
         private router: Router,
         private authService: AuthenticationService,
         private cookieService: CookieService,
-        private shellHelper: ShellHelperService
+        private shellHelper: ShellHelperService,
+        private applicationService: ApplicationService
     ) {
 
         this.shellHelper.subscribeToRouterEvents(
@@ -49,6 +52,20 @@ export class MainLayoutComponent implements OnInit {
     changeTitle(title: string, url: string): void {
         this.pageTitle = title;
         this.router.navigateByUrl(url);
+    }
+
+    openDomainTool() {
+        let currentAppId: number = Number(localStorage.getItem("currentAppId"));
+        this.applicationService.getApplicationById(currentAppId).subscribe((app: Application) => {
+            if (app) {
+                let codegenID = app.codegenProjectId;
+                if (codegenID) {
+                    this.router.navigate([`/codegen/fastcode/create-app/1`], {
+                        queryParams: { appId: codegenID }
+                    });
+                }
+            }
+        })
     }
 
     logoff(): void {
