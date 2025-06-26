@@ -65,6 +65,18 @@ export class InitializeToolsService {
                 })
 
             }
+            if (msg?.command == "api-builder-project-created" && msg?.for == "shell") {
+                this.appService.getApplicationById(msg?.payload?.id ? Number(msg?.payload?.id) : undefined).subscribe((application: Application) => {
+                    let updatedApplication = {
+                        ...application
+                    }
+                    updatedApplication.apiBuilderProjectId = msg?.payload?.apiBuilderProjectId;
+                    this.appService.updateApplication(msg?.payload?.id, updatedApplication).subscribe(res => {
+                        console.log("application from apibuilder updated successfully!!")
+                    })
+                })
+
+            }
         })
     }
 

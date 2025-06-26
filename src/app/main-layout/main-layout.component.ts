@@ -54,7 +54,24 @@ export class MainLayoutComponent implements OnInit {
         this.router.navigateByUrl(url);
     }
 
+    openApiBuilder() {
+        this.pageTitle = "Api Builder";
+        let currentAppId: number = Number(localStorage.getItem("currentAppId"));
+        this.applicationService.getApplicationById(currentAppId).subscribe((app: Application) => {
+            if (app) {
+                let apiBuilderId = app.apiBuilderProjectId;
+                if (apiBuilderId) {
+                    this.router.navigate([`/apiBuilder/apis/${apiBuilderId}`]);
+                }
+                else {
+                    this.router.navigate(['/apiBuilder/apis/create'])
+                }
+            }
+        })
+    }
+    
     openDomainTool() {
+        this.pageTitle = "Domain tool";
         let currentAppId: number = Number(localStorage.getItem("currentAppId"));
         this.applicationService.getApplicationById(currentAppId).subscribe((app: Application) => {
             if (app) {
