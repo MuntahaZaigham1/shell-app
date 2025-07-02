@@ -27,6 +27,7 @@ import { RedirectAfterLoginComponent } from './redirect-after-login.component';
 import { VsCodeExtCommunicationService } from './services/vs-code-ext-communication.service';
 import { HomeComponent } from './home/home.component';
 import { ApplicationService } from './applications/application.service';
+import { ShellExportBridgeService } from './services/shell-export-bridge.service';
 
 
 // Dynamic translation loader
@@ -72,7 +73,7 @@ export function RemoteTranslateLoader(http: HttpClient) {
     ScriptLoadingService,
     StylesLoadingService,
     SharedService,
-    ApplicationService
+    ApplicationService,
   ],
   bootstrap: [AppComponent]
 })

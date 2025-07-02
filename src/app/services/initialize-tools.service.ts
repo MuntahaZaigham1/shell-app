@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SharedService } from 'fastcode-shared-service';
 import { ApplicationService } from '../applications/application.service';
 import { Application } from '../applications/models/application';
+import { ShellExportBridgeService } from './shell-export-bridge.service';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +15,8 @@ export class InitializeToolsService {
     constructor(
         private router: Router,
         private toolsSharedService: SharedService,
-        private appService: ApplicationService
+        private appService: ApplicationService,
+        // private shellExportBridge: ShellExportBridgeService
     ) {
     }
 
@@ -34,6 +36,16 @@ export class InitializeToolsService {
         }
     }
 
+    sendZipToDomainTool(zipdata: any) {
+        this.toolsSharedService.sendMessage( {
+            command: "user-workspace-project-zip",
+            for: "codegen",
+            payload: {
+                zipData: zipdata 
+            }
+        })
+    }
+
     sendAppDataToTools() {
         if (this.appDataSent) {
             return; // ✅ prevent repeated sends
@@ -51,6 +63,17 @@ export class InitializeToolsService {
                 this.appService.getApplicationById(appId ? Number(appId) : undefined).subscribe((application: Application) => {
                     this.toolsSharedService.sendMessage({ command: "shell-application-metadata", payload: application, for: "all-tools" });
                 })
+            }
+            if (msg?.command == "get-user-workspace-project" && msg?.for == "shell") {
+                window.parent.postMessage({
+                    command: "get-workspace-project-ext"
+                }, "*");  // Send to VS Code extension
+            }
+            if (msg?.command == "codegen-application-created-domain" && msg?.for == "shell") {
+                window.parent.postMessage({
+                    command: "codegen-application-created-domain-zip",
+                    payload: msg.payload
+                }, "*");  // Send to VS Code extension
             }
             if (msg?.command == "ui-builder-project-created" && msg?.for == "shell") {
                 this.appService.getApplicationById(msg?.payload?.id ? Number(msg?.payload?.id) : undefined).subscribe((application: Application) => {
