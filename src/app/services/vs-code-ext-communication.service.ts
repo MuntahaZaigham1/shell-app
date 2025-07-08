@@ -24,6 +24,10 @@ export class VsCodeExtCommunicationService implements OnDestroy {
                 // Initialize shell state with metadata (tools, projectId, etc.)
                 this.initializeToolsService.initializePortal(metadata);
             }
+            if (event.data?.command === 'workspace-zip') {
+                const zipdata = event?.data?.data;
+                this.initializeToolsService.sendZipToDomainTool(zipdata);
+            }
         };
 
         // Add the listener

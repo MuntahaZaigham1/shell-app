@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private sharedNavService: SharedNavigationService,
-    private shellHelper: ShellHelperService
+    private shellHelper: ShellHelperService,
   ) {
     this.shellHelper.initLanguageSupport();
     this.shellHelper.subscribeToRouterEvents(
