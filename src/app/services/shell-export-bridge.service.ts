@@ -4,7 +4,6 @@ import { SharedService, MessageType } from 'fastcode-shared-service';
 export enum MessageCommand {
     CodeExported = 'code-exported',
     ExportStatus = 'export-status',
-    DomainToolAppUpdated = "codegen-application-created-domain"
 }
 
 @Injectable({ providedIn: 'root' })
@@ -15,6 +14,12 @@ export class ShellExportBridgeService {
         this.sharedService.listenMessage(this.handleToolMessage.bind(this));
         window.addEventListener('message', this.handleExtensionMessage.bind(this));
     }
+    
+    init() {
+        debugger;
+        this.sharedService.listenMessage(this.handleToolMessage.bind(this));
+        window.addEventListener('message', this.handleExtensionMessage.bind(this));
+    } 
 
     private handleToolMessage(message: MessageType) {
         switch (message.command) {
@@ -24,11 +29,6 @@ export class ShellExportBridgeService {
                     payload: message.payload
                 });
                 break;
-            case MessageCommand.DomainToolAppUpdated:
-                this.sendToExtension({
-                    command: "codegen-application-created-domain-zip",
-                    payload: message.payload
-                })
         }
     }
 
