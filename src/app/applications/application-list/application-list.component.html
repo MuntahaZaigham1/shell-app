@@ -12,37 +12,37 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <div *ngIf="!loading" class="app-grid">
-    <mat-card class="app-card" *ngFor="let app of applications">
-      <mat-card-header>
-        <mat-card-title>{{ app.name }}</mat-card-title>
-        <mat-card-subtitle>ID: {{ app.id }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p *ngIf="app.githubUrl">
-          <strong>GitHub:</strong>
-          <a href="{{ app.githubUrl }}" target="_blank">{{ app.githubUrl }}</a>
-        </p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-icon-button [matMenuTriggerFor]="appMenu" aria-label="App Options">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #appMenu="matMenu">
-          <button mat-menu-item (click)="checkoutFromGit(app)">
-            <mat-icon>cloud_download</mat-icon>
-            <span>Check Out from Git</span>
-          </button>
-          <button mat-menu-item (click)="openFromLocal(app)">
-            <mat-icon>folder_open</mat-icon>
-            <span>Open from Local</span>
-          </button>
-          <button mat-menu-item (click)="openTools(app)">
-            <mat-icon>build</mat-icon>
-            <span>Open Tools Window</span>
-          </button>
-        </mat-menu>
-      </mat-card-actions>
-    </mat-card>
+  <div *ngIf="!loading" class="app-list">
+    <div class="app-item"
+         *ngFor="let app of applications"
+         (mouseenter)="hoveredApp = app"
+         (mouseleave)="hoveredApp = null">
+      <div class="app-details">
+        <mat-icon class="app-icon">apps</mat-icon>
+        <div class="app-text">
+          <div class="app-name">{{ app.name }}</div>
+          <div *ngIf="app.githubUrl" class="app-github">
+            <mat-icon class="github-icon">code</mat-icon>
+            <span class="github-link" [matTooltip]="app.githubUrl">
+              {{ getShortGitUrl(app.githubUrl) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="app-actions">
+        <div class="action-button" (click)="checkoutFromGit(app)">
+          <mat-icon class="action-icon">cloud_download</mat-icon>
+          <span *ngIf="hoveredApp === app" class="action-label">Git</span>
+        </div>
+        <div class="action-button" (click)="openFromLocal(app)">
+          <mat-icon class="action-icon">folder_open</mat-icon>
+          <span *ngIf="hoveredApp === app" class="action-label">Local</span>
+        </div>
+        <div class="action-button" (click)="openTools(app)">
+          <mat-icon class="action-icon">build</mat-icon>
+          <span *ngIf="hoveredApp === app" class="action-label">Tools</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

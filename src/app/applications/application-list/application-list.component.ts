@@ -16,6 +16,7 @@ let isShellListenerRegistered = false;
 export class ApplicationListComponent implements OnInit, OnDestroy {
   applications: Application[] = [];
   loading = false;
+  hoveredApp: Application | null = null;
 
   ngOnInit(): void {
     this.loadApps();
@@ -49,7 +50,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
           githubUrl: metadata.githubRepository
         }
         isShellListenerRegistered = true;
-        console.log("createApplication is called", metadata?.name,isShellListenerRegistered);
+        console.log("createApplication is called", metadata?.name, isShellListenerRegistered);
         this.appService.createApplication(metadata?.name).subscribe((createdApp: Application) => {
           this.appService.updateApplication(createdApp?.id, application).subscribe(updatedApp => {
             window.parent.postMessage({
@@ -95,4 +96,13 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     isShellListenerRegistered = false;
   }
+
+  getShortGitUrl(fullUrl: string): string {
+  try {
+    const url = new URL(fullUrl);
+    return url.hostname + url.pathname;
+  } catch {
+    return fullUrl;
+  }
+}
 }

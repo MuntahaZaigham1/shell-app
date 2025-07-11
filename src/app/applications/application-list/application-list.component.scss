@@ -1,80 +1,128 @@
 :host {
-    display: block;
-    height: 100vh;
-    background: linear-gradient(to right, #f3f4f6, #ffffff);
-    overflow: auto;
+  display: block;
+  height: 100vh;
+  background: linear-gradient(to right, #f3f4f6, #ffffff);
+  overflow: auto;
 }
 
 .spacer {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 .toolbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background-color: #1976d2;
-    color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #1976d2;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 0 24px;
 }
 
 .toolbar-title {
-    font-size: 1.6rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .main-container {
-    padding: 32px;
+  padding: 32px;
 }
 
 .spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
 }
 
-.app-grid {
-    display: grid;
-    grid-gap: 24px;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    margin-top: 24px;
+.app-list {
+  margin-top: 24px;
 }
 
-.app-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
-    border-radius: 12px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    }
+.app-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
 }
 
-.mat-card-header {
-    padding-bottom: 0;
+.app-item:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid #1976d2;
 }
 
-.mat-card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
+.app-details {
+  display: flex;
+  align-items: center;
 }
 
-.mat-card-subtitle {
-    font-size: 0.9rem;
-    color: #757575;
+.app-icon,
+.github-icon {
+  color: #616161;
+  font-size: 20px;
 }
 
-.mat-card-content p {
-    margin: 0.5rem 0 0;
-    font-size: 0.95rem;
+.app-text {
+  display: flex;
+  flex-direction: column;
 }
 
-.mat-card-actions {
-    display: flex;
-    justify-content: flex-end;
-    padding: 16px;
+.app-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #212121;
+}
+
+.app-github {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #757575;
+  margin-top: 4px;
+}
+
+.github-link {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: color 0.3s;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.action-icon {
+  font-size: 22px;
+  color: #616161;
+  transition: color 0.3s ease;
+}
+
+.action-label {
+  margin-left: 6px;
+  font-size: 0.9rem;
+  font-weight: 600; // <- Bold label text
+  color: #616161;   // <- Gray by default
+  transition: color 0.3s ease-in;
+}
+
+.app-item:hover .action-button:hover .action-icon,
+.app-item:hover .action-button:hover .action-label {
+  color: #1976d2; // <- Blue on hover
 }
