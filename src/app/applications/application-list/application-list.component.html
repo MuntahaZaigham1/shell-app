@@ -1,48 +1,57 @@
 <mat-toolbar color="primary" class="toolbar">
-  <span class="toolbar-title">Applications</span>
-  <span class="spacer"></span>
-  <button mat-raised-button color="accent" style="margin-right:100px;" (click)="createNewApplication()">
-    <mat-icon>add</mat-icon>
-    Create New Application
-  </button>
+  <div class="logo-container">
+    <img src="../../../assets/images/logo.png" alt="Logo" />
+  </div>
 </mat-toolbar>
 
 <div class="main-container">
+  <div class="header-actions">
+    <h2 class="toolbar-title">Applications</h2>
+    <button mat-fab class="fab-button" (click)="createNewApplication()" aria-label="Create New Application" matTooltip="Create New Application" [matTooltipPosition]="'above'">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
   <div *ngIf="loading" class="spinner-container">
     <mat-spinner></mat-spinner>
   </div>
 
-  <div *ngIf="!loading" class="app-list">
-    <div class="app-item"
-         *ngFor="let app of applications"
-         (mouseenter)="hoveredApp = app"
-         (mouseleave)="hoveredApp = null">
-      <div class="app-details">
-        <mat-icon class="app-icon">apps</mat-icon>
-        <div class="app-text">
-          <div class="app-name">{{ app.name }}</div>
-          <div *ngIf="app.githubUrl" class="app-github">
-            <mat-icon class="github-icon">code</mat-icon>
-            <span class="github-link" [matTooltip]="app.githubUrl">
-              {{ getShortGitUrl(app.githubUrl) }}
-            </span>
+  <div *ngIf="!loading" class="card-grid">
+    <mat-card class="app-card" *ngFor="let app of applications" (mouseenter)="hoveredApp = app" (mouseleave)="hoveredApp = null">
+      <div class="delete-icon" (click)="openDeleteDialog(app); $event.stopPropagation()">
+        <mat-icon style="color: red;">delete</mat-icon>
+      </div>
+      <mat-card-title>{{ app.name }}</mat-card-title>
+      <mat-card-subtitle *ngIf="app.githubUrl">{{ getShortGitUrl(app.githubUrl) }}</mat-card-subtitle>
+
+      <mat-card-content>
+        <div class="card-actions">
+          <div class="action" (click)="checkoutFromGit(app)" matTooltip="Checkout from Git" [matTooltipPosition]="'above'">
+            <mat-icon>cloud_download</mat-icon>
+            <!-- <span class="action-label">CheckOut</span> -->
+          </div>
+          <div class="divider"></div>
+          <div class="action" (click)="openFromLocal(app)" matTooltip="Open from Local" [matTooltipPosition]="'above'">
+            <mat-icon>folder_open</mat-icon>
+            <!-- <span class="action-label">Local</span> -->
+          </div>
+          <div class="divider"></div>
+          <div class="action" (click)="openTools(app)" matTooltip="Open Tools Window" [matTooltipPosition]="'above'">
+            <mat-icon>build</mat-icon>
+            <!-- <span class="action-label">Tools</span> -->
           </div>
         </div>
-      </div>
-      <div class="app-actions">
-        <div class="action-button" (click)="checkoutFromGit(app)">
-          <mat-icon class="action-icon">cloud_download</mat-icon>
-          <span *ngIf="hoveredApp === app" class="action-label">Git</span>
-        </div>
-        <div class="action-button" (click)="openFromLocal(app)">
-          <mat-icon class="action-icon">folder_open</mat-icon>
-          <span *ngIf="hoveredApp === app" class="action-label">Local</span>
-        </div>
-        <div class="action-button" (click)="openTools(app)">
-          <mat-icon class="action-icon">build</mat-icon>
-          <span *ngIf="hoveredApp === app" class="action-label">Tools</span>
-        </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
+
+  <!-- Hidden template for dialog -->
+  <ng-template #deleteDialog let-data>
+    <h2 mat-dialog-title>Confirm Deletion</h2>
+    <mat-dialog-content>Would you like to delete the application "{{ data.appName }}"?</mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button >No</button>
+      <button mat-button cdkFocusInitial>Yes</button>
+    </mat-dialog-actions>
+  </ng-template>
 </div>

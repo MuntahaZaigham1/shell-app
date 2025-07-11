@@ -1,7 +1,7 @@
 :host {
   display: block;
   height: 100vh;
-  background: linear-gradient(to right, #f3f4f6, #ffffff);
+  background: #f5f5f5;
   overflow: auto;
 }
 
@@ -19,14 +19,23 @@
   padding: 0 24px;
 }
 
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 !important;
+  margin-bottom: 16px;
+}
+
 .toolbar-title {
   font-size: 1.6rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
 }
 
 .main-container {
-  padding: 32px;
+  padding: 0 32px 32px;
 }
 
 .spinner-container {
@@ -36,93 +45,101 @@
   height: 70vh;
 }
 
-.app-list {
-  margin-top: 24px;
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
 }
 
-.app-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 24px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  background-color: #ffffff;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
-  transition: all 0.25s ease;
+.app-card {
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  position: relative;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.app-item:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  border-left: 4px solid #1976d2;
+.app-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.app-details {
-  display: flex;
-  align-items: center;
-}
-
-.app-icon,
-.github-icon {
-  color: #616161;
+.delete-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
   font-size: 20px;
 }
 
-.app-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.app-name {
-  font-size: 1.25rem;
+mat-card-title {
+  font-size: 1.2rem;
   font-weight: 600;
-  color: #212121;
+  color: #333;
 }
 
-.app-github {
-  display: flex;
-  align-items: center;
+mat-card-subtitle {
   font-size: 0.9rem;
   color: #757575;
-  margin-top: 4px;
-}
-
-.github-link {
-  max-width: 260px;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.app-actions {
+.card-actions {
   display: flex;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
 }
 
-.action-button {
+.action {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center the icon vertically and horizontally */
+  cursor: pointer;
+  color: #616161;
+  transition: color 0.2s ease;
+  width: 55px; /* Fixed width to ensure uniform size */
+  height: 40px; /* Fixed height to match the icon size */
+}
+
+.action:hover {
+  color: #1976d2;
+}
+
+/* Removed .action-label since it's no longer used */
+
+/* Adjust divider height to match the new action size if needed */
+.divider {
+  width: 1px;
+  height: 40px; /* Updated to match action height */
+  background-color: #e0e0e0;
+}
+
+.logo-container {
+  background-color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  cursor: pointer;
-  transition: color 0.3s;
-  padding: 4px 8px;
-  border-radius: 4px;
+  margin-right: 16px;
 }
 
-.action-icon {
-  font-size: 22px;
-  color: #616161;
-  transition: color 0.3s ease;
+.logo-container img {
+  height: 36px;
+  object-fit: contain;
 }
 
-.action-label {
-  margin-left: 6px;
-  font-size: 0.9rem;
-  font-weight: 600; // <- Bold label text
-  color: #616161;   // <- Gray by default
-  transition: color 0.3s ease-in;
+.fab-button {
+  position: relative;
+  z-index: 1000;
+  background-color: #FF8F00;
 }
 
-.app-item:hover .action-button:hover .action-icon,
-.app-item:hover .action-button:hover .action-label {
-  color: #1976d2; // <- Blue on hover
+.tooltip {
+  display: none;
 }
+
+/* Import Roboto font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&display=swap');
