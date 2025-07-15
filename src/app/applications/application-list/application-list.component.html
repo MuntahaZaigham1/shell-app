@@ -7,7 +7,7 @@
 <div class="main-container">
   <div class="header-actions">
     <h2 class="toolbar-title">Applications</h2>
-    <button mat-fab class="fab-button" (click)="createNewApplication()" aria-label="Create New Application" matTooltip="Create New Application" [matTooltipPosition]="'above'">
+    <button *ngIf="permissionService.hasPermission('CREATE_APPLICATIONS')" mat-fab class="fab-button" (click)="createNewApplication()" aria-label="Create New Application" matTooltip="Create New Application" [matTooltipPosition]="'above'">
       <mat-icon>add</mat-icon>
     </button>
   </div>

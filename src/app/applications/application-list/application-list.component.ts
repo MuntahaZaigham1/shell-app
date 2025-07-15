@@ -6,6 +6,7 @@ import { ApplicationService } from '../application.service';
 import { Router } from '@angular/router';
 import { InitializeToolsService } from 'src/app/services/initialize-tools.service';
 import { SharedService } from 'fastcode-shared-service';
+import { PermissionService } from 'src/app/core/services/permission.service';
 let isShellListenerRegistered = false;
 
 @Component({
@@ -32,7 +33,8 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
     private initializeToolsService: InitializeToolsService,
     private sharedService: SharedService,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public permissionService: PermissionService,
   ) { }
 
   initializeMessageListener(): void {
