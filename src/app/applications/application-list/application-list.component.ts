@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Application } from '../models/application';
 import { ApplicationService } from '../application.service';
@@ -16,6 +16,8 @@ let isShellListenerRegistered = false;
 export class ApplicationListComponent implements OnInit, OnDestroy {
   applications: Application[] = [];
   loading = false;
+  hoveredApp: Application | null = null;
+  @ViewChild('deleteDialog') deleteDialog!: TemplateRef<any>;
 
   ngOnInit(): void {
     this.loadApps();
@@ -29,7 +31,8 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
     private appService: ApplicationService,
     private initializeToolsService: InitializeToolsService,
     private sharedService: SharedService,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) { }
 
   initializeMessageListener(): void {
@@ -49,7 +52,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
           githubUrl: metadata.githubRepository
         }
         isShellListenerRegistered = true;
-        console.log("createApplication is called", metadata?.name,isShellListenerRegistered);
+        console.log("createApplication is called", metadata?.name, isShellListenerRegistered);
         this.appService.createApplication(metadata?.name).subscribe((createdApp: Application) => {
           this.appService.updateApplication(createdApp?.id, application).subscribe(updatedApp => {
             window.parent.postMessage({
@@ -94,5 +97,34 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     isShellListenerRegistered = false;
+  }
+
+  getShortGitUrl(fullUrl: string): string {
+    try {
+      const url = new URL(fullUrl);
+      return url.hostname + url.pathname;
+    } catch {
+      return fullUrl;
+    }
+  }
+
+  openDeleteDialog(app: Application): void {
+    if (!this.deleteDialog) {
+      console.error('deleteDialog TemplateRef is not available');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(this.deleteDialog, {
+      width: '300px',
+      data: { appName: app.name }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Placeholder for API call to delete the application
+        console.log('Delete confirmed for app:', app.name);
+        // Add API call here later, e.g., this.appService.deleteApplication(app.id).subscribe(() => this.loadApps());
+      }
+    });
   }
 }

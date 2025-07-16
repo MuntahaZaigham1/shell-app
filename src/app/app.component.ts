@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedNavigationService } from 'fastcode-shared-service';
 import { ShellHelperService } from './services/shell-helper.service';
+import { ShellExportBridgeService } from './services/shell-export-bridge.service';
 
 
 @Component({
@@ -33,7 +34,9 @@ export class AppComponent implements OnInit {
   constructor(
     private sharedNavService: SharedNavigationService,
     private shellHelper: ShellHelperService,
+    private shellExportBridgeService: ShellExportBridgeService
   ) {
+    this.shellExportBridgeService.init();
     this.shellHelper.initLanguageSupport();
     this.shellHelper.subscribeToRouterEvents(
       () => (this.shellHelper.unloadAssets()),

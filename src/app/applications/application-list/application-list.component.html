@@ -1,48 +1,57 @@
 <mat-toolbar color="primary" class="toolbar">
-  <span class="toolbar-title">Applications</span>
-  <span class="spacer"></span>
-  <button mat-raised-button color="accent" style="margin-right:100px;" (click)="createNewApplication()">
-    <mat-icon>add</mat-icon>
-    Create New Application
-  </button>
+  <div class="logo-container">
+    <img src="../../../assets/images/logo.png" alt="Logo" />
+  </div>
 </mat-toolbar>
 
 <div class="main-container">
+  <div class="header-actions">
+    <h2 class="toolbar-title">Applications</h2>
+    <button mat-fab class="fab-button" (click)="createNewApplication()" aria-label="Create New Application" matTooltip="Create New Application" [matTooltipPosition]="'above'">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
   <div *ngIf="loading" class="spinner-container">
     <mat-spinner></mat-spinner>
   </div>
 
-  <div *ngIf="!loading" class="app-grid">
-    <mat-card class="app-card" *ngFor="let app of applications">
-      <mat-card-header>
-        <mat-card-title>{{ app.name }}</mat-card-title>
-        <mat-card-subtitle>ID: {{ app.id }}</mat-card-subtitle>
-      </mat-card-header>
+  <div *ngIf="!loading" class="card-grid">
+    <mat-card class="app-card" *ngFor="let app of applications" (mouseenter)="hoveredApp = app" (mouseleave)="hoveredApp = null">
+      <div class="delete-icon" (click)="openDeleteDialog(app); $event.stopPropagation()">
+        <mat-icon style="color: red;">delete</mat-icon>
+      </div>
+      <mat-card-title>{{ app.name }}</mat-card-title>
+      <mat-card-subtitle *ngIf="app.githubUrl">{{ getShortGitUrl(app.githubUrl) }}</mat-card-subtitle>
+
       <mat-card-content>
-        <p *ngIf="app.githubUrl">
-          <strong>GitHub:</strong>
-          <a href="{{ app.githubUrl }}" target="_blank">{{ app.githubUrl }}</a>
-        </p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-icon-button [matMenuTriggerFor]="appMenu" aria-label="App Options">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #appMenu="matMenu">
-          <button mat-menu-item (click)="checkoutFromGit(app)">
+        <div class="card-actions">
+          <div class="action" (click)="checkoutFromGit(app)" matTooltip="Checkout from Git" [matTooltipPosition]="'above'">
             <mat-icon>cloud_download</mat-icon>
-            <span>Check Out from Git</span>
-          </button>
-          <button mat-menu-item (click)="openFromLocal(app)">
+            <!-- <span class="action-label">CheckOut</span> -->
+          </div>
+          <div class="divider"></div>
+          <div class="action" (click)="openFromLocal(app)" matTooltip="Open from Local" [matTooltipPosition]="'above'">
             <mat-icon>folder_open</mat-icon>
-            <span>Open from Local</span>
-          </button>
-          <button mat-menu-item (click)="openTools(app)">
+            <!-- <span class="action-label">Local</span> -->
+          </div>
+          <div class="divider"></div>
+          <div class="action" (click)="openTools(app)" matTooltip="Open Tools Window" [matTooltipPosition]="'above'">
             <mat-icon>build</mat-icon>
-            <span>Open Tools Window</span>
-          </button>
-        </mat-menu>
-      </mat-card-actions>
+            <!-- <span class="action-label">Tools</span> -->
+          </div>
+        </div>
+      </mat-card-content>
     </mat-card>
   </div>
+
+  <!-- Hidden template for dialog -->
+  <ng-template #deleteDialog let-data>
+    <h2 mat-dialog-title>Confirm Deletion</h2>
+    <mat-dialog-content>Would you like to delete the application "{{ data.appName }}"?</mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button >No</button>
+      <button mat-button cdkFocusInitial>Yes</button>
+    </mat-dialog-actions>
+  </ng-template>
 </div>
