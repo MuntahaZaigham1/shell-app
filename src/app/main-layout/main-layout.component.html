@@ -1,30 +1,47 @@
 <mat-sidenav-container class="sidenav-container">
-    <!-- Sidebar -->
-    <mat-sidenav #sidenav mode="side" opened class="sidenav">
-      <mat-toolbar color="primary" class="toolbar logo">
-        <img src="../assets/images/logo.png" width="80%" alt="Logo">
-      </mat-toolbar>
-      <mat-nav-list>
-        <a mat-list-item (click)="changeTitle('Home', '/home')">Home</a>
-        <a mat-list-item (click)="openApiBuilder()">Api Builder</a>
-        <a mat-list-item (click)="openDomainTool()">Domain Tool</a>
-        <a mat-list-item (click)="openAddOns()">Add-ons</a>
-        <a mat-list-item (click)="changeTitle('Uibuilder', '/ui/redirect-after-login')">UiBuilder</a>
-      </mat-nav-list>
-    </mat-sidenav>
-    
-    <!-- Main Content -->
-    <mat-sidenav-content>
-      <mat-toolbar color="primary">
-        <button mat-icon-button (click)="sidenav.toggle()">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <span>{{ pageTitle }}</span>
-      </mat-toolbar>
-  
-      <div *ngIf="showMicrofrontend" [ngClass]="remoteCssClass" style="height:100%">
-        <router-outlet></router-outlet>
-      </div>
-  
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+
+  <!-- Sidebar -->
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <mat-toolbar color="primary" class="toolbar logo">
+      <img src="../assets/images/logo.png" width="60%" alt="Logo">
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <a mat-list-item class="nav-link" (click)="changeTitle('Home', '/home')">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      <a mat-list-item class="nav-link" (click)="openApiBuilder()">
+        <mat-icon>api</mat-icon>
+        <span>API Builder</span>
+      </a>
+      <a mat-list-item class="nav-link" (click)="openDomainTool()">
+        <mat-icon>domain</mat-icon>
+        <span>Domain Tool</span>
+      </a>
+      <a mat-list-item class="nav-link" (click)="openAddOns()">
+        <mat-icon>add</mat-icon>
+        <span>Add-ons</span>
+      </a>
+      <a mat-list-item class="nav-link" (click)="changeTitle('Uibuilder', '/ui/redirect-after-login')">
+        <mat-icon>build</mat-icon>
+        <span>UI Builder</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Main Content -->
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>{{ pageTitle }}</span>
+    </mat-toolbar>
+
+    <div *ngIf="showMicrofrontend" [ngClass]="remoteCssClass" style="height:100%">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
