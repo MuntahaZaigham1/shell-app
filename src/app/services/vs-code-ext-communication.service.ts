@@ -28,6 +28,10 @@ export class VsCodeExtCommunicationService implements OnDestroy {
                 const zipdata = event?.data?.data;
                 this.initializeToolsService.sendZipToDomainTool(zipdata);
             }
+            if (event.data?.command === 'accelerator-files-required') {
+                const data = event?.data?.payload;
+                this.initializeToolsService.sendZipToAddonsTool(data);
+            }
         };
 
         // Add the listener

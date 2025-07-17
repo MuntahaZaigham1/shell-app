@@ -85,6 +85,21 @@ export class MainLayoutComponent implements OnInit {
         })
     }
 
+    openAddOns() {
+        this.pageTitle = "Add-ons";
+        let currentAppId: number = Number(localStorage.getItem("currentAppId"));
+        this.applicationService.getApplicationById(currentAppId).subscribe((app: Application) => {
+            if (app) {
+                let codegenID = app.codegenProjectId;
+                if (codegenID) {
+                    this.router.navigate([`/codegen/fastcode/add-ons/1`], {
+                        queryParams: { appId: codegenID }
+                    });
+                }
+            }
+        })
+    }
+
     logoff(): void {
         this.cookieService.delete('Authentication');
         localStorage.removeItem('permissions');
