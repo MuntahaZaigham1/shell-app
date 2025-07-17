@@ -12,11 +12,11 @@
     </button>
   </div>
 
-  <div *ngIf="loading" class="spinner-container">
+  <div *ngIf="loading || uploading" class="spinner-container">
     <mat-spinner></mat-spinner>
   </div>
 
-  <div *ngIf="!loading" class="card-grid">
+  <div *ngIf="!loading && !uploading" class="card-grid">
     <mat-card class="app-card" *ngFor="let app of applications" (mouseenter)="hoveredApp = app" (mouseleave)="hoveredApp = null">
       <div class="delete-icon" (click)="openDeleteDialog(app); $event.stopPropagation()">
         <mat-icon style="color: red;">delete</mat-icon>
