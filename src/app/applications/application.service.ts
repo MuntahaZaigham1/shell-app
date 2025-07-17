@@ -18,6 +18,10 @@ export class ApplicationService {
     return this.http.get<Application>(`${this.baseUrl}/${id}`);
   }
 
+  getCodegenApplicationById(id: number | undefined): Observable<Application> {
+    return this.http.get<Application>(`${this.baseUrl}/${id}`);
+  }
+
   addGithubUrl(id: number, githubUrl: string): Observable<Application> {
     return this.http.put<Application>(`${this.baseUrl}/${id}/github-url`, null, {
       params: { githubUrl }

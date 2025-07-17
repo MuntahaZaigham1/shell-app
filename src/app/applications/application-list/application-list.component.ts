@@ -9,6 +9,7 @@ import { SharedService } from 'fastcode-shared-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Subject, takeUntil } from 'rxjs';
 let isShellListenerRegistered = false;
+let uploadStatus$ = new Subject<boolean>();
 
 @Component({
   selector: 'app-application-list',
@@ -20,17 +21,25 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
   loading = false;
   uploading = false;
   hoveredApp: Application | null = null;
-  private uploadStatus$ = new Subject<boolean>();
   private destroy$ = new Subject<void>();
 
   @ViewChild('deleteDialog') deleteDialog!: TemplateRef<any>;
+  dialogRef!: MatDialogRef<any>;
+
+  constructor(
+    private appService: ApplicationService,
+    private initializeToolsService: InitializeToolsService,
+    private sharedService: SharedService,
+    private router: Router,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
 
   private setupUploadStatusListener(): void {
-    this.uploadStatus$.pipe(
+    uploadStatus$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(uploading => {
       this.uploading = uploading;
-      this.cd.detectChanges();
     });
   }
 
@@ -43,7 +52,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
       window.addEventListener('message', (event) => {
         if (event?.data?.command === 'uploadedApplicationToGit') {
           // this.uploading = false;
-          this.uploadStatus$.next(false);
+          uploadStatus$.next(false);
           this.loadApps();
           console.log("msg recv from extension, uploadedApplicationToGit");
         }
@@ -52,20 +61,14 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor(
-    private appService: ApplicationService,
-    private initializeToolsService: InitializeToolsService,
-    private sharedService: SharedService,
-    private router: Router,
-    public dialog: MatDialog,
-    private cd: ChangeDetectorRef
-    // private spinner: MatProgressSpinner
-  ) {
-  }
-
   initializeMessageListener(): void {
     this.sharedService.listenMessage(msg => {
-      if (msg?.command == "application-creation-cancelled" && msg?.for == "shell") {
+      // Ignore messages not intended for shell
+      if (msg?.for !== "shell") {
+        console.log("Ignoring message not for shell:", msg);
+        return;
+      }
+      if (msg?.command == "application-creation-cancelled") {
         const metadataId = msg?.payload?.id;
         this.appService.deleteAppByid(metadataId)?.subscribe(() => {
           console.log("app-deleted");
@@ -73,8 +76,8 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
       }
       else if (msg?.command == "codegen-application-created-base" && msg?.for == "shell") {
         // this.uploading = true;
+        uploadStatus$.next(true);
         if (!isShellListenerRegistered) {
-          this.uploadStatus$.next(true);
           const metadata = msg.payload.metadata;
           const zipBlob = msg.payload.zipData;
           const application: Application = {
@@ -99,7 +102,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
           })
         }
       }
-    })
+    });
   }
 
   loadApps(): void {
@@ -119,7 +122,8 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
   }
 
   openTools(app: Application) {
-    this.initializeToolsService.initializePortal({ id: app?.id, name: app?.name })
+    localStorage.setItem('currentAppId', app.id.toString());
+    this.initializeToolsService.initializePortal({ id: app?.id, name: app?.name });
   }
 
   createNewApplication() {
@@ -145,17 +149,41 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const dialogRef = this.dialog.open(this.deleteDialog, {
-      width: '300px',
-      data: { appName: app.name }
+    this.dialogRef = this.dialog.open(this.deleteDialog, {
+      width: '400px',
+      data: { appName: app.name, id: app.id }
     });
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Placeholder for API call to delete the application
-        console.log('Delete confirmed for app:', app.name);
-        // Add API call here later, e.g., this.appService.deleteApplication(app.id).subscribe(() => this.loadApps());
+  deleteApplication(id: number, appName: string): void {
+    this.appService.deleteAppByid(id).subscribe({
+      next: () => {
+        this.loadApps();
+        this.dialogRef.close();
+        this.snackBar.open(`Application "${appName}" deleted successfully`, 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+      },
+      error: (err) => {
+        console.error('Error deleting application:', err);
+        this.snackBar.open('Failed to delete application', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
+  }
+
+  openEditDialog(app: Application): void {
+    //   localStorage.setItem('currentAppId', app.id.toString());
+    //   let codegenID = app.codegenProjectId;
+    //               if (codegenID) {
+    //                 const shellPrefix = 'fastcode';
+    //                 this.router.navigate([`/codegen/fastcode/edit-application`], {
+    //                        queryParams: { appId: codegenID }
+    //                     })
+    //               }
+
   }
 }
