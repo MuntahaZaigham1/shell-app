@@ -12,14 +12,26 @@
     </button>
   </div>
 
-  <div *ngIf="loading" class="spinner-container">
+  <div *ngIf="loading || uploading" class="spinner-container">
     <mat-spinner></mat-spinner>
   </div>
 
-  <div *ngIf="!loading" class="card-grid">
+  <div *ngIf="!loading && !uploading" class="card-grid">
     <mat-card class="app-card" *ngFor="let app of applications" (mouseenter)="hoveredApp = app" (mouseleave)="hoveredApp = null">
-      <div class="delete-icon" (click)="openDeleteDialog(app); $event.stopPropagation()">
-        <mat-icon style="color: red;">delete</mat-icon>
+      <div class="menu-icon">
+        <button mat-icon-button [matMenuTriggerFor]="appMenu" aria-label="Application Menu" (click)="$event.stopPropagation()">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #appMenu="matMenu">
+          <button mat-menu-item (click)="openEditDialog(app)">
+            <mat-icon>edit</mat-icon>
+            <span>Edit Application</span>
+          </button>
+          <button mat-menu-item (click)="openDeleteDialog(app)">
+            <mat-icon style="color: red;">delete</mat-icon>
+            <span>Delete Application</span>
+          </button>
+        </mat-menu>
       </div>
       <mat-card-title>{{ app.name }}</mat-card-title>
       <mat-card-subtitle *ngIf="app.githubUrl">{{ getShortGitUrl(app.githubUrl) }}</mat-card-subtitle>
@@ -28,30 +40,29 @@
         <div class="card-actions">
           <div class="action" (click)="checkoutFromGit(app)" matTooltip="Checkout from Git" [matTooltipPosition]="'above'">
             <mat-icon>cloud_download</mat-icon>
-            <!-- <span class="action-label">CheckOut</span> -->
           </div>
           <div class="divider"></div>
           <div class="action" (click)="openFromLocal(app)" matTooltip="Open from Local" [matTooltipPosition]="'above'">
             <mat-icon>folder_open</mat-icon>
-            <!-- <span class="action-label">Local</span> -->
           </div>
           <div class="divider"></div>
           <div class="action" (click)="openTools(app)" matTooltip="Open Tools Window" [matTooltipPosition]="'above'">
             <mat-icon>build</mat-icon>
-            <!-- <span class="action-label">Tools</span> -->
           </div>
         </div>
       </mat-card-content>
     </mat-card>
   </div>
 
-  <!-- Hidden template for dialog -->
+  <!-- Delete Dialog Template -->
   <ng-template #deleteDialog let-data>
-    <h2 mat-dialog-title>Confirm Deletion</h2>
-    <mat-dialog-content>Would you like to delete the application "{{ data.appName }}"?</mat-dialog-content>
-    <mat-dialog-actions>
-      <button mat-button >No</button>
-      <button mat-button cdkFocusInitial>Yes</button>
+    <h2 mat-dialog-title class="dialog-title">Confirm Deletion</h2>
+    <mat-dialog-content class="dialog-content">
+      Are you sure you want to delete the application <strong>{{ data.appName }}</strong>? This action cannot be undone.
+    </mat-dialog-content>
+    <mat-dialog-actions class="dialog-actions">
+      <button mat-button class="cancel-button" (click)="dialogRef.close(false)">Cancel</button>
+      <button mat-raised-button color="warn" (click)="deleteApplication(data.id, data.appName)" cdkFocusInitial>Delete</button>
     </mat-dialog-actions>
   </ng-template>
 </div>

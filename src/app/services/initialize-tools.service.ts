@@ -37,12 +37,19 @@ export class InitializeToolsService {
     }
 
     sendZipToDomainTool(zipdata: any) {
-        this.toolsSharedService.sendMessage( {
+        this.toolsSharedService.sendMessage({
             command: "user-workspace-project-zip",
             for: "codegen",
             payload: {
-                zipData: zipdata 
+                zipData: zipdata
             }
+        })
+    }
+    sendZipToAddonsTool(data: any) {
+        this.toolsSharedService.sendMessage({
+            command: "addons-files-required",
+            for: "codegen",
+            payload: data
         })
     }
 
@@ -69,9 +76,22 @@ export class InitializeToolsService {
                     command: "get-workspace-project-ext"
                 }, "*");  // Send to VS Code extension
             }
+            if (msg?.command == "get-addons-files" && msg?.for == "shell") {
+                window.parent.postMessage({
+                    command: "get-accelerator-files",
+                    payload: msg?.payload
+                }, "*");  // Send to VS Code extension
+            }
             if (msg?.command == "codegen-application-created-domain" && msg?.for == "shell") {
                 window.parent.postMessage({
                     command: "codegen-application-created-domain-zip",
+                    payload: msg.payload
+                }, "*");  // Send to VS Code extension
+            }
+            if (msg?.command == "export-add-ons-files" && msg?.for == "shell") {
+                console.log("export-add-ons-files-zip", msg?.payload);
+                window.parent.postMessage({
+                    command: "export-add-ons-files-zip",
                     payload: msg.payload
                 }, "*");  // Send to VS Code extension
             }
