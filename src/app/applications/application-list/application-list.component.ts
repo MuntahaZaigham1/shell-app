@@ -6,6 +6,7 @@ import { ApplicationService } from '../application.service';
 import { Router } from '@angular/router';
 import { InitializeToolsService } from 'src/app/services/initialize-tools.service';
 import { SharedService } from 'fastcode-shared-service';
+
 let isShellListenerRegistered = false;
 
 @Component({
@@ -18,6 +19,16 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
   loading = false;
   hoveredApp: Application | null = null;
   @ViewChild('deleteDialog') deleteDialog!: TemplateRef<any>;
+  dialogRef!: MatDialogRef<any>;
+
+  constructor(
+    private appService: ApplicationService,
+    private initializeToolsService: InitializeToolsService,
+    private sharedService: SharedService,
+    private router: Router,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit(): void {
     this.loadApps();
@@ -27,30 +38,26 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor(
-    private appService: ApplicationService,
-    private initializeToolsService: InitializeToolsService,
-    private sharedService: SharedService,
-    private router: Router,
-    public dialog: MatDialog
-  ) { }
-
   initializeMessageListener(): void {
     this.sharedService.listenMessage(msg => {
-      if (msg?.command == "application-creation-cancelled" && msg?.for == "shell") {
+      // Ignore messages not intended for shell
+      if (msg?.for !== "shell") {
+        console.log("Ignoring message not for shell:", msg);
+        return;
+      }
+      if (msg?.command == "application-creation-cancelled") {
         const metadataId = msg?.payload?.id;
         this.appService.deleteAppByid(metadataId)?.subscribe(() => {
           console.log("app-deleted");
-        })
-      }
-      else if (msg?.command == "codegen-application-created-base" && msg?.for == "shell" && !isShellListenerRegistered) {
+        });
+      } else if (msg?.command == "codegen-application-created-base" && !isShellListenerRegistered) {
         const metadata = msg.payload.metadata;
         const zipBlob = msg.payload.zipData;
         const application: Application = {
           name: metadata?.name,
           codegenProjectId: metadata?.id,
           githubUrl: metadata.githubRepository
-        }
+        };
         isShellListenerRegistered = true;
         console.log("createApplication is called", metadata?.name, isShellListenerRegistered);
         this.appService.createApplication(metadata?.name).subscribe((createdApp: Application) => {
@@ -63,12 +70,11 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
                 zip: zipBlob
               }
             }, '*');
-
             this.loadApps();
-          })
-        })
+          });
+        });
       }
-    })
+    });
   }
 
   loadApps(): void {
@@ -88,7 +94,8 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
   }
 
   openTools(app: Application) {
-    this.initializeToolsService.initializePortal({ id: app?.id, name: app?.name })
+    localStorage.setItem('currentAppId', app.id.toString());
+    this.initializeToolsService.initializePortal({ id: app?.id, name: app?.name });
   }
 
   createNewApplication() {
@@ -114,17 +121,41 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const dialogRef = this.dialog.open(this.deleteDialog, {
-      width: '300px',
-      data: { appName: app.name }
+    this.dialogRef = this.dialog.open(this.deleteDialog, {
+      width: '400px',
+      data: { appName: app.name, id: app.id }
     });
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Placeholder for API call to delete the application
-        console.log('Delete confirmed for app:', app.name);
-        // Add API call here later, e.g., this.appService.deleteApplication(app.id).subscribe(() => this.loadApps());
+  deleteApplication(id: number, appName: string): void {
+    this.appService.deleteAppByid(id).subscribe({
+      next: () => {
+        this.loadApps();
+        this.dialogRef.close();
+        this.snackBar.open(`Application "${appName}" deleted successfully`, 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+      },
+      error: (err) => {
+        console.error('Error deleting application:', err);
+        this.snackBar.open('Failed to delete application', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
+  }
+
+  openEditDialog(app: Application): void {
+  //   localStorage.setItem('currentAppId', app.id.toString());
+  //   let codegenID = app.codegenProjectId;
+  //               if (codegenID) {
+  //                 const shellPrefix = 'fastcode';
+  //                 this.router.navigate([`/codegen/fastcode/edit-application`], {
+  //                        queryParams: { appId: codegenID }
+  //                     })
+  //               }
+   
   }
 }
