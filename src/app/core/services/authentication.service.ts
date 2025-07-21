@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { throwError, Subject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { throwError, Subject, BehaviorSubject, Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Router } from '@angular/router';
@@ -25,6 +25,9 @@ export class AuthenticationService {
 
   permissionsChange: Subject<string> = new Subject<string>();
   private apiUrl = API_URL;
+
+  private authStateSubject = new BehaviorSubject<boolean>(false); // 🔑 controls auth state
+  public authorizationState$: Observable<boolean> = this.authStateSubject.asObservable();
 
   private decodedToken: ITokenDetail = {};
   token = '';
@@ -180,23 +183,30 @@ export class AuthenticationService {
   }
 
   getAuthorizationCode() {
-    this.http.get<any>(this.apiUrl + '/auth/getAuthorizationToken').subscribe((token) => {
-      const redirectUrl = sessionStorage.getItem("redirectUrl");
-      sessionStorage.removeItem("redirectUrl");
-      if (redirectUrl) {
-        this.router.navigateByUrl(redirectUrl);
-      }
-      sessionStorage.setItem('Authorization', token.token);
-      const decodedToken = this.decodePassedToken(token.token);
-      const permissions = decodedToken ? decodedToken.scopes : [];
-      localStorage.setItem('permissions', JSON.stringify(permissions));
-      this.permissionService.refreshPermissions();
-      this.permissionsChange.next('');
-      if (!redirectUrl && this.isVsCodeExtension()) {
-        // this.router.navigate(['projects']);
-        this.router.navigate(['redirect-after-login']);
-      }
-    }, this.handleError);
+    this.http.get<any>(this.apiUrl + '/auth/getAuthorizationToken').pipe(
+      tap((token) => {
+        const redirectUrl = sessionStorage.getItem("redirectUrl");
+        sessionStorage.removeItem("redirectUrl");
+        if (redirectUrl) {
+          this.router.navigateByUrl(redirectUrl);
+        }
+        sessionStorage.setItem('Authorization', token.token);
+        const decodedToken = this.decodePassedToken(token.token);
+        const permissions = decodedToken ? decodedToken.scopes : [];
+        localStorage.setItem('permissions', JSON.stringify(permissions));
+        this.permissionService.refreshPermissions();
+        this.permissionsChange.next('');
+        if (!redirectUrl && this.isVsCodeExtension()) {
+          // this.router.navigate(['projects']);
+          this.router.navigate(['redirect-after-login']);
+        }
+      }),
+      tap(() => {
+        this.authStateSubject.next(true); // 🔥 signal that auth is complete
+
+      }),
+      catchError(this.handleError)
+    ).subscribe();
   }
 
   getTokenExpirationDate(token: string): Date | null {
