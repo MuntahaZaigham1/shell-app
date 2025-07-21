@@ -10,7 +10,6 @@ import { PermissionService } from 'src/app/core/services/permission.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Subject, takeUntil } from 'rxjs';
 let isShellListenerRegistered = false;
-let uploadStatus$ = new Subject<boolean>();
 
 @Component({
   selector: 'app-application-list',
@@ -20,7 +19,6 @@ let uploadStatus$ = new Subject<boolean>();
 export class ApplicationListComponent implements OnInit, OnDestroy {
   applications: Application[] = [];
   loading = false;
-  uploading = false;
   hoveredApp: Application | null = null;
   private destroy$ = new Subject<void>();
 
@@ -37,26 +35,15 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
   ) { }
 
-  private setupUploadStatusListener(): void {
-    uploadStatus$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(uploading => {
-      this.uploading = uploading;
-    });
-  }
-
   ngOnInit(): void {
-
-    this.setupUploadStatusListener();
     this.loadApps();
     if (!isShellListenerRegistered) {
       this.initializeMessageListener();
       window.addEventListener('message', (event) => {
         if (event?.data?.command === 'uploadedApplicationToGit') {
-          // this.uploading = false;
-          uploadStatus$.next(false);
           this.loadApps();
           console.log("msg recv from extension, uploadedApplicationToGit");
+          this.router.navigate(['/applications']);
         }
       })
       isShellListenerRegistered = true;
@@ -77,8 +64,6 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
         })
       }
       else if (msg?.command == "codegen-application-created-base" && msg?.for == "shell") {
-        // this.uploading = true;
-        uploadStatus$.next(true);
         if (!isShellListenerRegistered) {
           const metadata = msg.payload.metadata;
           const zipBlob = msg.payload.zipData;
@@ -99,7 +84,10 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
                   zip: zipBlob
                 }
               }, '*');
-              // this.loadApps();
+              this.sharedService.sendMessage({
+                command: "application-created-received-by-shell",
+                for: "codegen"
+              });
             })
           })
         }

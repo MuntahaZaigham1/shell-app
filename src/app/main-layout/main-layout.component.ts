@@ -47,6 +47,12 @@ export class MainLayoutComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        window.addEventListener('message', (event) => {
+            if (event?.data?.command === 'workspace-updated-and-cleaned') {
+                console.log("msg recv from extension, workspace-updated-and-cleaned");
+                this.router.navigate(['/']);
+            }
+        })
     }
 
     changeTitle(title: string, url: string): void {
@@ -69,7 +75,7 @@ export class MainLayoutComponent implements OnInit {
             }
         })
     }
-    
+
     openDomainTool() {
         this.pageTitle = "Domain tool";
         let currentAppId: number = Number(localStorage.getItem("currentAppId"));

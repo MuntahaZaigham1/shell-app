@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Application } from './models/application';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationService {
   private baseUrl = environment.apiUrl + '/api/applications';
-
+  
   constructor(private http: HttpClient) { }
 
   getApplications(): Observable<Application[]> {
