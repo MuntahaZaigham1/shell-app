@@ -141,29 +141,43 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
 
     this.dialogRef = this.dialog.open(this.deleteDialog, {
       width: '400px',
-      data: { appName: app.name, id: app.id }
+      data: { appName: app.name, id: app.id, codegenId: app.codegenProjectId, apiBuilderId: app.apiBuilderProjectId, bpmnId: app.bpmnModelerProjectId, uiBuilderProjectId: app.uiBuilderProjectId, uiBuilderClientId: app.uiBuilderClientId }
     });
   }
 
-  deleteApplication(id: number, appName: string): void {
-    this.appService.deleteAppByid(id).subscribe({
+  deleteApplication(data: any): void {
+    const message = {
+      command: 'delete-project',
+      payload: {
+        appId: data.id,
+        codegenId: data.codegenId,
+        appName: data.appName,
+      },
+      for: 'codegen',
+    };
+    console.log('Shell ApplicationListComponent: Sending delete-project message:', message);
+    this.sharedService.sendMessage(message);
+
+    // Proceed with shell app deletion
+    this.appService.deleteAppByid(data.id).subscribe({
       next: () => {
         this.loadApps();
         this.dialogRef.close();
-        this.snackBar.open(`Application "${appName}" deleted successfully`, 'Close', {
+        this.snackBar.open(`Application "${data.appName}" deleted successfully`, 'Close', {
           duration: 3000,
-          panelClass: ['success-snackbar']
+          panelClass: ['success-snackbar'],
         });
       },
       error: (err) => {
-        console.error('Error deleting application:', err);
+        console.error('Shell ApplicationListComponent: Error deleting application:', err);
         this.snackBar.open('Failed to delete application', 'Close', {
           duration: 3000,
-          panelClass: ['error-snackbar']
+          panelClass: ['error-snackbar'],
         });
-      }
+      },
     });
   }
+
 
   openEditDialog(app: Application): void {
     //   localStorage.setItem('currentAppId', app.id.toString());

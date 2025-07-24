@@ -1,9 +1,7 @@
 import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
 import { AuthModule, ConfigurationService, OidcSecurityService } from 'angular-auth-oidc-client';
 import { authConfig } from 'src/environments/environment';
 import { JwtInterceptor } from './core/jwt-interceptor';
@@ -29,20 +27,27 @@ import { HomeComponent } from './home/home.component';
 import { ApplicationService } from './applications/application.service';
 import { ShellExportBridgeService } from './services/shell-export-bridge.service';
 
-
 // Dynamic translation loader
 export function RemoteTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
-
+// Preload fastcode module
+export function preloadFastcodeModule() {
+  return () => {
+    return import('fast-code/Module').then((m) => {
+      console.log('Shell: Fastcode module preloaded');
+      return m.FastcodeModule;
+    });
+  };
+}
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     MainLayoutComponent,
-    RedirectAfterLoginComponent 
+    RedirectAfterLoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,18 +55,23 @@ export function RemoteTranslateLoader(http: HttpClient) {
     AppRoutingModule,
     CoreModule,
     AuthModule.forRoot({
-      config: authConfig
+      config: authConfig,
     }),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
         useFactory: RemoteTranslateLoader,
-        deps: [HttpClient]
-      }
+        deps: [HttpClient],
+      },
     }),
-    MaterialModule
+    MaterialModule,
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: preloadFastcodeModule,
+      multi: true,
+    },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
     AuthGuard,
@@ -74,18 +84,16 @@ export function RemoteTranslateLoader(http: HttpClient) {
     StylesLoadingService,
     SharedService,
     ApplicationService,
+    ShellExportBridgeService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(private authenticationService: AuthenticationService,
-    private router: Router,
+  constructor(
+    private authenticationService: AuthenticationService,
+    private router: Router
   ) {
-    // this.authenticationService.configure();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-
-    // this.sharedAuthenticationService.sendAuthToken(this.authenticationService.idToken);
-
     this.authenticationService.initializeTokenListener();
   }
 }
